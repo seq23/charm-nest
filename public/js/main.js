@@ -3,7 +3,7 @@
   toggle?.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});
   fetch('/api/public/settings').then(r=>r.json()).then(({settings})=>{
     if(!settings)return;
-    document.querySelectorAll('.js-brand-logo').forEach(img=>{img.src=settings.activeLogoUrl||'/brand/placeholder-logo.svg';});
+    document.querySelectorAll('.js-brand-logo').forEach(img=>{img.src=settings.activeLogoUrl||'/brand/logo-options/logo-03-beaded-badge-web.webp';});
     document.querySelectorAll('.js-social-links').forEach(el=>{
       const links=[];
       if(settings.tiktokUrl)links.push(`<a href="${settings.tiktokUrl}" rel="noopener">TikTok${settings.tiktokHandle?` ${settings.tiktokHandle}`:''}</a>`);
