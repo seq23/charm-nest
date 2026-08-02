@@ -27,7 +27,7 @@ async function derivePassword(password, salt, iterations) {
   return new Uint8Array(bits);
 }
 
-export async function hashPassword(password, iterations = 210000) {
+export async function hashPassword(password, iterations = 100000) {
   if (typeof password !== 'string' || password.length < 10) throw new Error('Password must contain at least 10 characters.');
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const hash = await derivePassword(password, salt, iterations);

@@ -15,3 +15,5 @@ data/uploads/thumbs/*
 !data/uploads/thumbs/.gitkeep
 *.log
 .DS_Store
+
+.wrangler/
