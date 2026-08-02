@@ -9,7 +9,7 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "charmnest"
-database_id = "SET_DURING_PROVIDER_ACTIVATION"
+database_id = "0f6c15c1-c734-473f-85a9-cb091c552374"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
