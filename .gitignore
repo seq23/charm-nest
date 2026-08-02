@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.dev.vars
+.env
+.env.*
+!.env.example
+!.dev.vars.example
+data/charmnest.sqlite
+data/charmnest.sqlite-*
+data/uploads/originals/*
+data/uploads/web/*
+data/uploads/thumbs/*
+!data/uploads/originals/.gitkeep
+!data/uploads/web/.gitkeep
+!data/uploads/thumbs/.gitkeep
+*.log
+.DS_Store
