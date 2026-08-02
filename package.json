@@ -1,0 +1,20 @@
+{
+  "name": "charmnest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CharmNest public storefront and private CharmNest Studio for bracelet drops, photos, orders, and brand assets.",
+  "scripts": {
+    "dev": "node src/local/server.mjs",
+    "start": "node src/local/server.mjs",
+    "build": "node scripts/build.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run build && npm run validate && npm test",
+    "auth:hash": "node scripts/hash-password.mjs",
+    "seed": "node scripts/seed-local.mjs"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

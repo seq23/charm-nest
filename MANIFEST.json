@@ -1,0 +1,468 @@
+{
+  "repo": "charmnest",
+  "version": "1.0.0",
+  "artifactScope": [
+    "Phase 1 public website",
+    "Phase 1A CharmNest Studio"
+  ],
+  "status": "STRUCTURALLY CHECKED \u2014 LOCAL VALIDATION REQUIRED",
+  "fileCount": 91,
+  "totalBytes": 25199133,
+  "files": [
+    {
+      "path": ".dev.vars.example",
+      "bytes": 269,
+      "sha256": "1efa6ba438bc31875743b352908d7e07d1d6bd74cef24399c36308020d3062fa"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 293,
+      "sha256": "67452fc0fa2d9aa5a22716bb1bb475820b4c8ea2b321bd424d19976fb030bee0"
+    },
+    {
+      "path": "PHASE_LEDGER.md",
+      "bytes": 1757,
+      "sha256": "a670d47372230dc0fd79e7cfa63bae2c380b889fc5f5dfef36f71b87624f21de"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1650,
+      "sha256": "d3a48f2bfc6f5b4fd6d0728d566badd45c8cc265d9e408a674737b918f150519"
+    },
+    {
+      "path": "VALIDATION.md",
+      "bytes": 2048,
+      "sha256": "97ecce06bdb6f0e84032bda3d62ca3c1b725d4fa71af9a6f58cd7777ed00afe4"
+    },
+    {
+      "path": "package.json",
+      "bytes": 646,
+      "sha256": "ed24ec6a70c5333225b1b2acd71ada0eeeb194131864bfac8133959565914d77"
+    },
+    {
+      "path": "wrangler.toml",
+      "bytes": 404,
+      "sha256": "6ceda77e4b7bcecee40a83898df8b721475b32ac876041c446434eea127479ab"
+    },
+    {
+      "path": "data/uploads/originals/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/uploads/thumbs/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/uploads/web/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 5627,
+      "sha256": "e8146f5b7bfc8a72f77da220510ec11585c14f5bdd82c12681af23e45a61042b"
+    },
+    {
+      "path": "dist/404/index.html",
+      "bytes": 2388,
+      "sha256": "ea4df62eee2fce1ad89d8f6a7b9b9d3602b254d9e742e83713e2c46efae711a2"
+    },
+    {
+      "path": "dist/about/index.html",
+      "bytes": 2949,
+      "sha256": "802c4289951b7a90f6c18a12f4aaea47a1aac40531279b46ed6dc3d3cce95bf2"
+    },
+    {
+      "path": "dist/bracelet-styles/index.html",
+      "bytes": 3245,
+      "sha256": "632d312e10293046a5726b83a1ce3af2d548bdbe847138b2b38ab4ad62f5330b"
+    },
+    {
+      "path": "dist/brand/favicon-placeholder.svg",
+      "bytes": 302,
+      "sha256": "d2f1027ec58568ec05f99cb6ddf55c0b772d7f94c20497a055cf5f6dcf4e269e"
+    },
+    {
+      "path": "dist/brand/placeholder-logo.svg",
+      "bytes": 1256,
+      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-01-bubble-heart-original.png",
+      "bytes": 2180137,
+      "sha256": "e67c200328737750d6a8b400ad875f3f8a882f7479126390b19e5371363541e7"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-01-bubble-heart-web.webp",
+      "bytes": 83422,
+      "sha256": "de8ba13c43dc873533f4929b127207bdd40d9c002d6968f51ee2bb72b222944a"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-02-heart-nest-original.png",
+      "bytes": 2148357,
+      "sha256": "246bb1bcc55e403d3c5673d533a11ae4c36623560a286ff15bea04e4bdeb1e08"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-02-heart-nest-web.webp",
+      "bytes": 62150,
+      "sha256": "8ad6af4f1499051dc1823d3a5963835a01ffacfeec397e586c524443fce80cf3"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-03-beaded-badge-original.png",
+      "bytes": 1585083,
+      "sha256": "262ffeebe8f22af2f2fea1337133bb20cfb616234e43c9ecfac20a79d78bdec0"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-03-beaded-badge-web.webp",
+      "bytes": 128824,
+      "sha256": "656c9f0100813c575324a6b8f03c65347cb03dedf3376dc6c2033989e4c2f60b"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-04-braided-cn-original.png",
+      "bytes": 1474853,
+      "sha256": "86f31d1f0953f3510c0c09fd29e5f9746282ffbe89f868d0f5640419a8f1d84a"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-04-braided-cn-web.webp",
+      "bytes": 74734,
+      "sha256": "3f1c6c13295071fab4ed4e6fbe29cfc581eec7bc6309fa42cf7333105106dc8a"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-05-charm-bracelet-original.png",
+      "bytes": 2138798,
+      "sha256": "ebfbe3001db22891bec09678f56c2b4c8b822a2d78687a07f57632a1596ce84d"
+    },
+    {
+      "path": "dist/brand/logo-options/logo-05-charm-bracelet-web.webp",
+      "bytes": 74646,
+      "sha256": "e1a1e9ca09bf2dfaa6ecf56db26916fe385d8d81422aaa83a43627a713e9bff9"
+    },
+    {
+      "path": "dist/brand/selected-logo/README.md",
+      "bytes": 303,
+      "sha256": "d65504e119f780a3035ff5acdf11a82884d3d197cefed0b96d786ef9170b3db8"
+    },
+    {
+      "path": "dist/contact/index.html",
+      "bytes": 2897,
+      "sha256": "7aab87c574365bdec193a73bca0db9ecbde0ba927f73de9ee54f8f398481307f"
+    },
+    {
+      "path": "dist/custom-orders/index.html",
+      "bytes": 5249,
+      "sha256": "1145b4f4b29c4521fa5f8cb7d56ea610078ea29a7cbe205aa08d054251f46156"
+    },
+    {
+      "path": "dist/faq/index.html",
+      "bytes": 4062,
+      "sha256": "e416a98a0fdd44363ba7ffc0b6e894f146868457e9941600d88e75c839e09056"
+    },
+    {
+      "path": "dist/images/placeholders/beaded.svg",
+      "bytes": 616,
+      "sha256": "74359f065fd0118c186c4a32dc06d638551ba25fd843dcd4a012294217d04e87"
+    },
+    {
+      "path": "dist/images/placeholders/braided.svg",
+      "bytes": 739,
+      "sha256": "a5b37714d30726b85c48236d1008837c6a31084e19d4f6a0a81e06d972bd922f"
+    },
+    {
+      "path": "dist/js/drop.js",
+      "bytes": 3527,
+      "sha256": "b2fdaebecbec2d8b17c05142056fc939bfffc10d44e5417e5c336c37eb0de20c"
+    },
+    {
+      "path": "dist/js/main.js",
+      "bytes": 1883,
+      "sha256": "8cc69802cff2e51116600db1029ad856321c452af12b86f8b48ab85b0061c61a"
+    },
+    {
+      "path": "dist/js/order.js",
+      "bytes": 1847,
+      "sha256": "9972e4dfb5db5602bcca5d68fa942201ee99d668612746beb041fa4609e441c6"
+    },
+    {
+      "path": "dist/js/studio.js",
+      "bytes": 26058,
+      "sha256": "0b7fd67d86bb6965396a13226527412f834ba069d6a8ae5e84ea44679d1bff83"
+    },
+    {
+      "path": "dist/privacy/index.html",
+      "bytes": 2978,
+      "sha256": "d16659ef31d96cab0555ce83b33950546901a43d4db64eb7ec86468a0b7fa903"
+    },
+    {
+      "path": "dist/school-drop/index.html",
+      "bytes": 3216,
+      "sha256": "635b17311921445369a7166c26430ddc93d8d64ed7220bea3e9891be38972d60"
+    },
+    {
+      "path": "dist/shipping-and-returns/index.html",
+      "bytes": 3060,
+      "sha256": "1db9e313077c1c48e5d37e8901b779da665e11060a47cb5e04b3fafcf7a8d915"
+    },
+    {
+      "path": "dist/shop/index.html",
+      "bytes": 4790,
+      "sha256": "2e99f67fac4e0f35ef84c3784eebc7277b904b3db46a1f1a9ec0b02ec164eb0a"
+    },
+    {
+      "path": "dist/sizing-and-care/index.html",
+      "bytes": 3200,
+      "sha256": "8f40451753b187ebefb95ca25eb3a96eb00062d0f0a789ff76d7a6976d360ea9"
+    },
+    {
+      "path": "dist/studio/index.html",
+      "bytes": 1101,
+      "sha256": "f22fa3c61221f7e7975a68bcb02be691824469e071c53ca20bd62102ad6edb16"
+    },
+    {
+      "path": "dist/styles/main.css",
+      "bytes": 9909,
+      "sha256": "2f3f8b902f7b55b6f02dd6d48bf0e4e2c9a58f1b60c560b0ab60c0709d43a9cb"
+    },
+    {
+      "path": "dist/styles/studio.css",
+      "bytes": 6880,
+      "sha256": "8604d314b772bd7bb15e20f057aabd2eb04ae029e14b4011cca3c7c13d025c8b"
+    },
+    {
+      "path": "docs/business/CHARMNEST_BUSINESS_MODEL.md",
+      "bytes": 1316,
+      "sha256": "b688fbb674ebf3ccfe0a2620a53ec9a73b500299056f32786779cf017511d39b"
+    },
+    {
+      "path": "docs/business/SCHOOL_YEAR_DROP_PLANNER.csv",
+      "bytes": 350,
+      "sha256": "3f1d7cf60840246da2f2759db0429c426dc9ecbb5f0825d526ebdc535d03f276"
+    },
+    {
+      "path": "docs/runbooks/DAY_0_OPERATOR.md",
+      "bytes": 1388,
+      "sha256": "678dd84ed0b943937f17f2d407fc5c73aec46092d55db70b9093357779600461"
+    },
+    {
+      "path": "migrations/0001_init.sql",
+      "bytes": 3399,
+      "sha256": "56fed687eb47f23dc76330878b5acd236a86206d35c1302311b1e2250ce5f053"
+    },
+    {
+      "path": "public/brand/favicon-placeholder.svg",
+      "bytes": 302,
+      "sha256": "d2f1027ec58568ec05f99cb6ddf55c0b772d7f94c20497a055cf5f6dcf4e269e"
+    },
+    {
+      "path": "public/brand/placeholder-logo.svg",
+      "bytes": 1256,
+      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
+    },
+    {
+      "path": "public/brand/logo-options/logo-01-bubble-heart-original.png",
+      "bytes": 2180137,
+      "sha256": "e67c200328737750d6a8b400ad875f3f8a882f7479126390b19e5371363541e7"
+    },
+    {
+      "path": "public/brand/logo-options/logo-01-bubble-heart-web.webp",
+      "bytes": 83422,
+      "sha256": "de8ba13c43dc873533f4929b127207bdd40d9c002d6968f51ee2bb72b222944a"
+    },
+    {
+      "path": "public/brand/logo-options/logo-02-heart-nest-original.png",
+      "bytes": 2148357,
+      "sha256": "246bb1bcc55e403d3c5673d533a11ae4c36623560a286ff15bea04e4bdeb1e08"
+    },
+    {
+      "path": "public/brand/logo-options/logo-02-heart-nest-web.webp",
+      "bytes": 62150,
+      "sha256": "8ad6af4f1499051dc1823d3a5963835a01ffacfeec397e586c524443fce80cf3"
+    },
+    {
+      "path": "public/brand/logo-options/logo-03-beaded-badge-original.png",
+      "bytes": 1585083,
+      "sha256": "262ffeebe8f22af2f2fea1337133bb20cfb616234e43c9ecfac20a79d78bdec0"
+    },
+    {
+      "path": "public/brand/logo-options/logo-03-beaded-badge-web.webp",
+      "bytes": 128824,
+      "sha256": "656c9f0100813c575324a6b8f03c65347cb03dedf3376dc6c2033989e4c2f60b"
+    },
+    {
+      "path": "public/brand/logo-options/logo-04-braided-cn-original.png",
+      "bytes": 1474853,
+      "sha256": "86f31d1f0953f3510c0c09fd29e5f9746282ffbe89f868d0f5640419a8f1d84a"
+    },
+    {
+      "path": "public/brand/logo-options/logo-04-braided-cn-web.webp",
+      "bytes": 74734,
+      "sha256": "3f1c6c13295071fab4ed4e6fbe29cfc581eec7bc6309fa42cf7333105106dc8a"
+    },
+    {
+      "path": "public/brand/logo-options/logo-05-charm-bracelet-original.png",
+      "bytes": 2138798,
+      "sha256": "ebfbe3001db22891bec09678f56c2b4c8b822a2d78687a07f57632a1596ce84d"
+    },
+    {
+      "path": "public/brand/logo-options/logo-05-charm-bracelet-web.webp",
+      "bytes": 74646,
+      "sha256": "e1a1e9ca09bf2dfaa6ecf56db26916fe385d8d81422aaa83a43627a713e9bff9"
+    },
+    {
+      "path": "public/brand/selected-logo/README.md",
+      "bytes": 303,
+      "sha256": "d65504e119f780a3035ff5acdf11a82884d3d197cefed0b96d786ef9170b3db8"
+    },
+    {
+      "path": "public/images/placeholders/beaded.svg",
+      "bytes": 616,
+      "sha256": "74359f065fd0118c186c4a32dc06d638551ba25fd843dcd4a012294217d04e87"
+    },
+    {
+      "path": "public/images/placeholders/braided.svg",
+      "bytes": 739,
+      "sha256": "a5b37714d30726b85c48236d1008837c6a31084e19d4f6a0a81e06d972bd922f"
+    },
+    {
+      "path": "public/js/drop.js",
+      "bytes": 3527,
+      "sha256": "b2fdaebecbec2d8b17c05142056fc939bfffc10d44e5417e5c336c37eb0de20c"
+    },
+    {
+      "path": "public/js/main.js",
+      "bytes": 1883,
+      "sha256": "8cc69802cff2e51116600db1029ad856321c452af12b86f8b48ab85b0061c61a"
+    },
+    {
+      "path": "public/js/order.js",
+      "bytes": 1847,
+      "sha256": "9972e4dfb5db5602bcca5d68fa942201ee99d668612746beb041fa4609e441c6"
+    },
+    {
+      "path": "public/js/studio.js",
+      "bytes": 26058,
+      "sha256": "0b7fd67d86bb6965396a13226527412f834ba069d6a8ae5e84ea44679d1bff83"
+    },
+    {
+      "path": "public/styles/main.css",
+      "bytes": 9909,
+      "sha256": "2f3f8b902f7b55b6f02dd6d48bf0e4e2c9a58f1b60c560b0ab60c0709d43a9cb"
+    },
+    {
+      "path": "public/styles/studio.css",
+      "bytes": 6880,
+      "sha256": "8604d314b772bd7bb15e20f057aabd2eb04ae029e14b4011cca3c7c13d025c8b"
+    },
+    {
+      "path": "reference/design/studio-design-reference.png",
+      "bytes": 1861715,
+      "sha256": "452d9a2eed66d7ff85e1e5eb8acf23894d1c6083b6b1d332609f9f45bc6f1f9f"
+    },
+    {
+      "path": "reference/private/reference-flyer-face-private-only.png",
+      "bytes": 3168285,
+      "sha256": "3d7c3e105d4539c3234278fa095deb929737fbf92b9fd93b8aa2c924cb01bf7d"
+    },
+    {
+      "path": "sample-marketing/README.md",
+      "bytes": 441,
+      "sha256": "967475d8b1074a3a2d805dd21de42a62507e89afa341acd5db717342744c9197"
+    },
+    {
+      "path": "sample-marketing/charmnest-sample-letter.svg",
+      "bytes": 3143,
+      "sha256": "976f03379d2f6a74723c50bd5ef8df9ad080bbfb5250500fbc6033d3de586dee"
+    },
+    {
+      "path": "sample-marketing/charmnest-sample-square.svg",
+      "bytes": 3064,
+      "sha256": "53fad0820350582a4f5f4e8e99845d1379301d9b42597472ba570384ba172c6d"
+    },
+    {
+      "path": "sample-marketing/charmnest-sample-story.svg",
+      "bytes": 3070,
+      "sha256": "8b94143ac1e22f13d199b4f9013ea489d27043c6e15a20eeb3014706b4143ef5"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "bytes": 22965,
+      "sha256": "1eec905207a5154f1ef7a5db8072a589e381e85c6d6f73ff27a70fe8457a60e0"
+    },
+    {
+      "path": "scripts/hash-password.mjs",
+      "bytes": 285,
+      "sha256": "362764ffeac8808873d55b8b85da5c7e74b904f40e89b121f2379c1169192def"
+    },
+    {
+      "path": "scripts/seed-local.mjs",
+      "bytes": 797,
+      "sha256": "7184da33b8c24ba344a138736b7942e593ef57e80f7bc71aa8c5b560f84f6a7c"
+    },
+    {
+      "path": "scripts/validate.mjs",
+      "bytes": 2678,
+      "sha256": "9a43e643c69f3054b6076116bbd5059f300e660a96a38317d48c12cf8dd1c82b"
+    },
+    {
+      "path": "src/cloudflare/store.mjs",
+      "bytes": 10048,
+      "sha256": "cdeeb67f02cdebf49d1332f22e3e8311fafe1ffbf1cf2002ce6669eb6449ed5d"
+    },
+    {
+      "path": "src/cloudflare/worker.mjs",
+      "bytes": 1332,
+      "sha256": "7f4ce96ba05380c8693a45d4b03cf1d11c2ca4f80cd2d20e90263b09298f5b28"
+    },
+    {
+      "path": "src/core/api.mjs",
+      "bytes": 12286,
+      "sha256": "08c182b0de24a16872e73a2016bad8cafec85d9f84fe369c337670b29cfdcde6"
+    },
+    {
+      "path": "src/core/auth.mjs",
+      "bytes": 4309,
+      "sha256": "25f86fa408e16dd274738d49c92517617f219cc8f420904ca72cdc5c607203ec"
+    },
+    {
+      "path": "src/core/constants.mjs",
+      "bytes": 2408,
+      "sha256": "23a560e9642eea208b9b04b57d615f5628324a5a4e2f0941647954084820fef3"
+    },
+    {
+      "path": "src/core/flyer.mjs",
+      "bytes": 4912,
+      "sha256": "01fea486cfd888f5736b6558ca7d5aa15b8a6ec7ecd93f508d5f02205c5dcf05"
+    },
+    {
+      "path": "src/core/store-utils.mjs",
+      "bytes": 3008,
+      "sha256": "a958bc31ddc9778f76f4c1cd3b789fe5fb768343d4dc2d43a90ba9a3b9d74776"
+    },
+    {
+      "path": "src/core/validation.mjs",
+      "bytes": 5937,
+      "sha256": "84b189e2ae78dd7771691e41b18e8ce69e802b26ce8fff0da530e52463843cdd"
+    },
+    {
+      "path": "src/local/server.mjs",
+      "bytes": 4972,
+      "sha256": "d255bfdf1fea3c8de2355b0fb2ad95ac0f834d533653ed43e4b4857b49190f8b"
+    },
+    {
+      "path": "src/local/store.mjs",
+      "bytes": 11608,
+      "sha256": "1732184fa2bb65bba0abc87ccdaf47f867d9e7a1c93cd62116f45db618880b7c"
+    },
+    {
+      "path": "tests/api.test.mjs",
+      "bytes": 4150,
+      "sha256": "7a81087e7255c47a95ea255ec7bbe5cddfaa731fb053815cfddafda2e71dc4e1"
+    },
+    {
+      "path": "tests/auth.test.mjs",
+      "bytes": 790,
+      "sha256": "05389b4f30af4387437845d88e41af60a553cf0f077ec6d9c561152ff01df52d"
+    }
+  ]
+}

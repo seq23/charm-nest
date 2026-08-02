@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8fc"/><stop offset="1" stop-color="#ffd7e9"/></linearGradient>
+    <clipPath id="photoClip"><rect x="108" y="520" width="864" height="650" rx="36"/></clipPath>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <circle cx="129.6" cy="153.6" r="12" fill="#ffd166"/><circle cx="950.4" cy="192" r="12" fill="#b8f2e6"/>
+  <text x="540" y="180" text-anchor="middle" fill="#f83f91" font-family="Trebuchet MS, Arial" font-size="98" font-weight="800">CharmNest</text>
+  <text x="540" y="250" text-anchor="middle" fill="#5a2143" font-family="Arial" font-size="38" font-weight="700">Little charms. Big vibes.</text>
+  <rect x="118.8" y="285" width="842.4" height="90" rx="24" fill="#f83f91"/>
+  <text x="540" y="344" text-anchor="middle" fill="#fff" font-family="Arial" font-size="44" font-weight="800">SAMPLE SCHOOL DROP</text>
+  <rect x="108" y="520" width="864" height="650" rx="36" fill="#ffe5f2"/><text x="540" y="845" text-anchor="middle" fill="#7b2f59" font-family="Arial" font-size="34" font-weight="700">Add an approved bracelet photo</text>
+  <text x="540" y="1218" text-anchor="middle" fill="#5a2143" font-family="Arial" font-size="34" font-weight="700">Featured Color 1 + Featured Color 2</text>
+  <g transform="translate(97.2 1260)">
+    <rect width="410.4" height="120" rx="28" fill="#fff" stroke="#ffacd0" stroke-width="4"/>
+    <text x="205.2" y="44" text-anchor="middle" fill="#5a2143" font-family="Arial" font-size="25" font-weight="700">SCHOOL DROP</text>
+    <text x="205.2" y="98" text-anchor="middle" fill="#f83f91" font-family="Arial" font-size="62" font-weight="900">$2</text>
+  </g>
+  <g transform="translate(572.4 1260)">
+    <rect width="410.4" height="120" rx="28" fill="#fff" stroke="#ffacd0" stroke-width="4"/>
+    <text x="205.2" y="44" text-anchor="middle" fill="#5a2143" font-family="Arial" font-size="25" font-weight="700">CUSTOM COLORS</text>
+    <text x="205.2" y="98" text-anchor="middle" fill="#f83f91" font-family="Arial" font-size="62" font-weight="900">$3</text>
+  </g>
+  <text x="540" y="1430" text-anchor="middle" fill="#5a2143" font-family="Arial" font-size="32" font-weight="700">Check TikTok for the latest confirmed drop.</text>
+  <text x="540" y="1472" text-anchor="middle" fill="#7b2f59" font-family="Arial" font-size="28">TikTok link added in Studio</text>
+  <text x="540" y="1512" text-anchor="middle" fill="#7b2f59" font-family="Arial" font-size="26">Contact email added in Studio</text>
+  <foreignObject x="86.4" y="1660" width="907.1999999999999" height="210">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial;color:#6c3a55;text-align:center;font-size:24px;line-height:1.35">Featured colors, charms, quantities, release dates, and availability may change. Some designs are limited and may sell out. School sales may require school approval.</div>
+  </foreignObject>
+</svg>
