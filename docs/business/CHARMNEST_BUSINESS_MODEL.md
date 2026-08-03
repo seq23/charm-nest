@@ -4,34 +4,43 @@
 
 - Name: CharmNest
 - Tagline: **Little charms. Big vibes.**
-- Products: elastic beaded charm bracelets and braided yarn friendship bracelets.
+- Products: elastic beaded charm bracelets, braided friendship bracelets, and custom round pin-back buttons.
 
-## School model
+## Local bracelet model
 
-- One confirmed color scheme at a time.
-- Beaded school-drop bracelet: $2.
-- Braided school-drop bracelet: $2.
-- Local custom colors: $3.
-- Colors, charms, quantities, release dates, and availability are subject to change.
-- Only confirmed drops appear publicly.
-- School sales require compliance with school rules and adult oversight.
+- Confirmed monthly-drop bracelet: `$2` each.
+- Confirmed local custom bracelet: `$3` each for pickup.
+- Local delivery may add a configured delivery fee.
+- Monthly-drop bracelets are local only.
+- Colors, charms, quantities, release dates, and availability may change.
 
-## Online model
+## Buttons and pins
 
-Online prices are higher because they include personalization, customer communication, packaging, marketplace fees, shipping administration, and occasional remakes.
+CharmNest accepts custom button/pin requests for:
 
-| Product | Starting range |
-|---|---:|
-| Custom braided bracelet | $6–$8 |
-| Custom elastic color bracelet | $8–$10 |
-| Name bracelet | $10–$12 |
-| Bead-and-charm bracelet | $12–$15 |
-| Matching braided pair | $12–$16 |
-| Matching charm pair | $20–$24 |
-| Mixed bestie set | $16–$20 |
-| Bracelet stack | $24–$36 |
-| Party packs | $40–$90 |
+- graduations;
+- memorials and funerals;
+- birthdays and parties;
+- reunions and showers;
+- teams, groups, and other events.
 
-## Initial checkout strategy
+Button pricing is not guessed. The Maker configures a unit price and any setup/design fee after the client confirms the operating model. Artwork or personal photos are shared only after the public request is confirmed through an adult-managed private channel.
 
-The public site builds the brand and presents products. Etsy is the first planned online checkout channel. Stripe or Shopify is reviewed later only after sales justify the extra operating cost and complexity.
+## Fulfillment
+
+- Local pickup.
+- Local delivery with a configurable fee.
+- Non-local shipping with a required private shipping address.
+- Shipped custom bracelets use a separate configurable unit price and handling fee.
+
+## Payment
+
+- Cash and Cash App may be accepted.
+- Customers pay only after availability and the final total are confirmed.
+- Cash App handle, QR image, and instructions are managed in Studio.
+- Studio records manual payment truth: unpaid/received, cash/Cash App, amount, date, and note.
+- There is no automatic Cash App API verification.
+
+## Checkout strategy
+
+The public site handles requests and confirmation. Etsy remains the first planned marketplace checkout lane. Stripe or Shopify is reviewed later only after sales volume justifies the cost and complexity.

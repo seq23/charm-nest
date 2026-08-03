@@ -1,93 +1,61 @@
 {
   "repo": "charmnest",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "artifactScope": [
-    "Phase 1 public website",
-    "Phase 1A CharmNest Studio"
+    "Phase 1B unified Maker Studio",
+    "Buttons and pins public offering",
+    "Fulfillment-aware custom order intake",
+    "Quote-safe pricing, Cash App display, and manual payment receipts",
+    "Repair: deterministic updater rebuild and button-order persistence"
   ],
-  "status": "STRUCTURALLY CHECKED \u2014 LOCAL VALIDATION REQUIRED",
-  "fileCount": 91,
-  "totalBytes": 25199133,
+  "status": "STRUCTURALLY CHECKED — LOCAL VALIDATION REQUIRED",
+  "fileCount": 99,
+  "totalBytes": 35718503,
   "files": [
     {
       "path": ".dev.vars.example",
-      "bytes": 269,
-      "sha256": "1efa6ba438bc31875743b352908d7e07d1d6bd74cef24399c36308020d3062fa"
+      "bytes": 209,
+      "sha256": "4e936bd261397ac0711ec8fc64f4f5bf50483d267439efa4261630b05df979a0"
     },
     {
       "path": ".gitignore",
-      "bytes": 293,
-      "sha256": "67452fc0fa2d9aa5a22716bb1bb475820b4c8ea2b321bd424d19976fb030bee0"
+      "bytes": 305,
+      "sha256": "ac4e35921cdbb39d310ff8108e34732b4354bacc55fd83dd0e274637a58b216e"
     },
     {
       "path": "PHASE_LEDGER.md",
-      "bytes": 1757,
-      "sha256": "a670d47372230dc0fd79e7cfa63bae2c380b889fc5f5dfef36f71b87624f21de"
+      "bytes": 3142,
+      "sha256": "6a6049133b096f2ff2a84a806da5eb7ba2981f6925614858163f9a196d419809"
     },
     {
       "path": "README.md",
-      "bytes": 1650,
-      "sha256": "d3a48f2bfc6f5b4fd6d0728d566badd45c8cc265d9e408a674737b918f150519"
+      "bytes": 2432,
+      "sha256": "05d423d92648116a66face02681b71946ba41f96369ad8ed86827dae245e1ece"
     },
     {
       "path": "VALIDATION.md",
-      "bytes": 2048,
-      "sha256": "97ecce06bdb6f0e84032bda3d62ca3c1b725d4fa71af9a6f58cd7777ed00afe4"
-    },
-    {
-      "path": "package.json",
-      "bytes": 646,
-      "sha256": "ed24ec6a70c5333225b1b2acd71ada0eeeb194131864bfac8133959565914d77"
-    },
-    {
-      "path": "wrangler.toml",
-      "bytes": 404,
-      "sha256": "6ceda77e4b7bcecee40a83898df8b721475b32ac876041c446434eea127479ab"
-    },
-    {
-      "path": "data/uploads/originals/.gitkeep",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "path": "data/uploads/thumbs/.gitkeep",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "path": "data/uploads/web/.gitkeep",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "path": "dist/index.html",
-      "bytes": 5627,
-      "sha256": "e8146f5b7bfc8a72f77da220510ec11585c14f5bdd82c12681af23e45a61042b"
+      "bytes": 2737,
+      "sha256": "d8d4329c81c2c49232a84e01e459d7a53919fc0ea3556be3de5ec7b26db8bc64"
     },
     {
       "path": "dist/404/index.html",
-      "bytes": 2388,
-      "sha256": "ea4df62eee2fce1ad89d8f6a7b9b9d3602b254d9e742e83713e2c46efae711a2"
+      "bytes": 2572,
+      "sha256": "d2d2abfddb2a9aded233361d40145fe25c79127267df1402e325c0e8db01c893"
     },
     {
       "path": "dist/about/index.html",
-      "bytes": 2949,
-      "sha256": "802c4289951b7a90f6c18a12f4aaea47a1aac40531279b46ed6dc3d3cce95bf2"
+      "bytes": 3132,
+      "sha256": "16b1999291b5e7941d6aa60f8fb66861addc88ef0e096df4644dfc1653a25e6a"
     },
     {
       "path": "dist/bracelet-styles/index.html",
-      "bytes": 3245,
-      "sha256": "632d312e10293046a5726b83a1ce3af2d548bdbe847138b2b38ab4ad62f5330b"
+      "bytes": 3314,
+      "sha256": "0ba9423e30f14e47c6dcf37ae638658f75da84028d67d57d57762b2947d47fdd"
     },
     {
       "path": "dist/brand/favicon-placeholder.svg",
       "bytes": 302,
       "sha256": "d2f1027ec58568ec05f99cb6ddf55c0b772d7f94c20497a055cf5f6dcf4e269e"
-    },
-    {
-      "path": "dist/brand/placeholder-logo.svg",
-      "bytes": 1256,
-      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
     },
     {
       "path": "dist/brand/logo-options/logo-01-bubble-heart-original.png",
@@ -140,24 +108,34 @@
       "sha256": "e1a1e9ca09bf2dfaa6ecf56db26916fe385d8d81422aaa83a43627a713e9bff9"
     },
     {
+      "path": "dist/brand/placeholder-logo.svg",
+      "bytes": 1256,
+      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
+    },
+    {
       "path": "dist/brand/selected-logo/README.md",
-      "bytes": 303,
-      "sha256": "d65504e119f780a3035ff5acdf11a82884d3d197cefed0b96d786ef9170b3db8"
+      "bytes": 284,
+      "sha256": "78bb16161ac579bb43a4f4b97c4349168f066811efd873483fe1db91ac5db112"
+    },
+    {
+      "path": "dist/buttons-and-pins/index.html",
+      "bytes": 4111,
+      "sha256": "06b6143c589cb5a05cbc6b4c65518a0e6fc4bf4342a1d336e08ce778a2800cc3"
     },
     {
       "path": "dist/contact/index.html",
-      "bytes": 2897,
-      "sha256": "7aab87c574365bdec193a73bca0db9ecbde0ba927f73de9ee54f8f398481307f"
+      "bytes": 3070,
+      "sha256": "684f523db4b2865c570ecd2111cbde75cd13c15d8731846c4451c89461d25657"
     },
     {
       "path": "dist/custom-orders/index.html",
-      "bytes": 5249,
-      "sha256": "1145b4f4b29c4521fa5f8cb7d56ea610078ea29a7cbe205aa08d054251f46156"
+      "bytes": 9193,
+      "sha256": "36d5c7dc27d22cb65c2988fefa547d7838d38c7670d5f7af4625be1886cd63b2"
     },
     {
       "path": "dist/faq/index.html",
-      "bytes": 4062,
-      "sha256": "e416a98a0fdd44363ba7ffc0b6e894f146868457e9941600d88e75c839e09056"
+      "bytes": 4339,
+      "sha256": "18ab727a02c6334b7655a21c5c8ff38ac2d99c163bd4fbad01bcd3870434750e"
     },
     {
       "path": "dist/images/placeholders/beaded.svg",
@@ -170,69 +148,94 @@
       "sha256": "a5b37714d30726b85c48236d1008837c6a31084e19d4f6a0a81e06d972bd922f"
     },
     {
+      "path": "dist/images/products/charmnest-beaded.png",
+      "bytes": 1822285,
+      "sha256": "98d3caab3c1d1ebbaa949e2acab67c7075058ce235d75aec311f6fd6d6dfccd1"
+    },
+    {
+      "path": "dist/images/products/charmnest-braided.png",
+      "bytes": 1610781,
+      "sha256": "21fa14e475c3b4bd9d909c57a53b8c67378d60fadc5676b4ac64fae09c02e77b"
+    },
+    {
+      "path": "dist/images/products/charmnest-buttons-pins.svg",
+      "bytes": 4057,
+      "sha256": "91e37031900ebfdea40fd57c9401640e8cd01832fec03e0796cd0f023b60e44c"
+    },
+    {
+      "path": "dist/images/products/charmnest-hero.png",
+      "bytes": 1776814,
+      "sha256": "0cf0614581aa010a3f4afd0c29a58e893e46de28de3249dcaf7fafd27a0a369b"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 6084,
+      "sha256": "b8f27126b7ccbdf4098e40b706df42d34b3162baa7cd4c69bc5daa91547b8559"
+    },
+    {
       "path": "dist/js/drop.js",
-      "bytes": 3527,
-      "sha256": "b2fdaebecbec2d8b17c05142056fc939bfffc10d44e5417e5c336c37eb0de20c"
+      "bytes": 3533,
+      "sha256": "39d9359c5136abe401cdb200ec3e522b9af9528447ff31059dd599a7ca8ad48e"
     },
     {
       "path": "dist/js/main.js",
-      "bytes": 1883,
-      "sha256": "8cc69802cff2e51116600db1029ad856321c452af12b86f8b48ab85b0061c61a"
+      "bytes": 2579,
+      "sha256": "478ce2d13a0fe73bfd065af3f0d36d1e9cb98dc46ed0939ad004f4da85708c19"
     },
     {
       "path": "dist/js/order.js",
-      "bytes": 1847,
-      "sha256": "9972e4dfb5db5602bcca5d68fa942201ee99d668612746beb041fa4609e441c6"
+      "bytes": 9689,
+      "sha256": "1ba75785859a78595d2a35e6bb2674f57a1e80fba0827a197cd1293de9e6d76d"
     },
     {
       "path": "dist/js/studio.js",
-      "bytes": 26058,
-      "sha256": "0b7fd67d86bb6965396a13226527412f834ba069d6a8ae5e84ea44679d1bff83"
+      "bytes": 34958,
+      "sha256": "779920504647e1027e7c60ea483c53a8621dfccf1a6745933c98d458840cd780"
     },
     {
       "path": "dist/privacy/index.html",
-      "bytes": 2978,
-      "sha256": "d16659ef31d96cab0555ce83b33950546901a43d4db64eb7ec86468a0b7fa903"
+      "bytes": 3328,
+      "sha256": "99884bcac676c5fc1bb75af3755f35e1aaa39705f1d5f6c706227ffa0073931d"
     },
     {
       "path": "dist/school-drop/index.html",
-      "bytes": 3216,
-      "sha256": "635b17311921445369a7166c26430ddc93d8d64ed7220bea3e9891be38972d60"
+      "bytes": 3264,
+      "sha256": "2e79d7e0f0d1927da3c780f3d91a2d250d46c7cc6b17f2806bab98429e1b8874"
     },
     {
       "path": "dist/shipping-and-returns/index.html",
-      "bytes": 3060,
-      "sha256": "1db9e313077c1c48e5d37e8901b779da665e11060a47cb5e04b3fafcf7a8d915"
+      "bytes": 3505,
+      "sha256": "6c9b5d372536e5e8b9e7dc9081b84b0f38937f116b4a3bdd5bfbdace407e2358"
     },
     {
       "path": "dist/shop/index.html",
-      "bytes": 4790,
-      "sha256": "2e99f67fac4e0f35ef84c3784eebc7277b904b3db46a1f1a9ec0b02ec164eb0a"
+      "bytes": 4643,
+      "sha256": "34ba9d3da15a0053a7b1e6be74bf25c534415508169102a3c8e077555192058b"
     },
     {
       "path": "dist/sizing-and-care/index.html",
-      "bytes": 3200,
-      "sha256": "8f40451753b187ebefb95ca25eb3a96eb00062d0f0a789ff76d7a6976d360ea9"
+      "bytes": 3362,
+      "sha256": "e054454be4230cbb349488d79f41aae3c7ed5abfb673ee1d6afe7b06f1891b47"
     },
     {
       "path": "dist/studio/index.html",
-      "bytes": 1101,
-      "sha256": "f22fa3c61221f7e7975a68bcb02be691824469e071c53ca20bd62102ad6edb16"
+      "bytes": 1066,
+      "sha256": "ec750728eda42913ed7e357655935fe52a501a60be3cee21a04fc6504477981d"
     },
     {
       "path": "dist/styles/main.css",
-      "bytes": 9909,
-      "sha256": "2f3f8b902f7b55b6f02dd6d48bf0e4e2c9a58f1b60c560b0ab60c0709d43a9cb"
+      "bytes": 11130,
+      "sha256": "441601f9556e30d0823c1310bcb03a073057aa732c2f97377f1c6873eb656435"
     },
     {
       "path": "dist/styles/studio.css",
-      "bytes": 6880,
-      "sha256": "8604d314b772bd7bb15e20f057aabd2eb04ae029e14b4011cca3c7c13d025c8b"
+      "bytes": 8435,
+      "sha256": "748fb9b57cf3c0ce3ca7fc1b4437c8d0e16471ba46fad3082fc95beb44e9ec5a"
     },
     {
       "path": "docs/business/CHARMNEST_BUSINESS_MODEL.md",
-      "bytes": 1316,
-      "sha256": "b688fbb674ebf3ccfe0a2620a53ec9a73b500299056f32786779cf017511d39b"
+      "bytes": 1750,
+      "sha256": "cbb09b19443f81a4d090c87dda3489c957169318e13d429b14ed05c57f84f947"
     },
     {
       "path": "docs/business/SCHOOL_YEAR_DROP_PLANNER.csv",
@@ -241,8 +244,8 @@
     },
     {
       "path": "docs/runbooks/DAY_0_OPERATOR.md",
-      "bytes": 1388,
-      "sha256": "678dd84ed0b943937f17f2d407fc5c73aec46092d55db70b9093357779600461"
+      "bytes": 2318,
+      "sha256": "51ca2ad56b19bbf04ffdce7cfbde86d4780cab073c5391135a51b2c4a98a2112"
     },
     {
       "path": "migrations/0001_init.sql",
@@ -250,14 +253,24 @@
       "sha256": "56fed687eb47f23dc76330878b5acd236a86206d35c1302311b1e2250ce5f053"
     },
     {
+      "path": "migrations/0002_orders_fulfillment_payments.sql",
+      "bytes": 1111,
+      "sha256": "e499bc24724ee5357b79565093b115d5488f810ac813349852c3ee15016d9d50"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 236,
+      "sha256": "da6b42dcb092fdf912af84d7359f1b535745756e75e879939e9fb4b89385a781"
+    },
+    {
+      "path": "package.json",
+      "bytes": 737,
+      "sha256": "dd07f0c534ee98c1fd9090114fdb12786dd9b76bf0cbd830133453a95243073d"
+    },
+    {
       "path": "public/brand/favicon-placeholder.svg",
       "bytes": 302,
       "sha256": "d2f1027ec58568ec05f99cb6ddf55c0b772d7f94c20497a055cf5f6dcf4e269e"
-    },
-    {
-      "path": "public/brand/placeholder-logo.svg",
-      "bytes": 1256,
-      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
     },
     {
       "path": "public/brand/logo-options/logo-01-bubble-heart-original.png",
@@ -310,9 +323,14 @@
       "sha256": "e1a1e9ca09bf2dfaa6ecf56db26916fe385d8d81422aaa83a43627a713e9bff9"
     },
     {
+      "path": "public/brand/placeholder-logo.svg",
+      "bytes": 1256,
+      "sha256": "baaf29462cc34aff41bf95c063d7ca24ce69a0f80e28fdf777c253eb6b37643c"
+    },
+    {
       "path": "public/brand/selected-logo/README.md",
-      "bytes": 303,
-      "sha256": "d65504e119f780a3035ff5acdf11a82884d3d197cefed0b96d786ef9170b3db8"
+      "bytes": 284,
+      "sha256": "78bb16161ac579bb43a4f4b97c4349168f066811efd873483fe1db91ac5db112"
     },
     {
       "path": "public/images/placeholders/beaded.svg",
@@ -325,34 +343,54 @@
       "sha256": "a5b37714d30726b85c48236d1008837c6a31084e19d4f6a0a81e06d972bd922f"
     },
     {
+      "path": "public/images/products/charmnest-beaded.png",
+      "bytes": 1822285,
+      "sha256": "98d3caab3c1d1ebbaa949e2acab67c7075058ce235d75aec311f6fd6d6dfccd1"
+    },
+    {
+      "path": "public/images/products/charmnest-braided.png",
+      "bytes": 1610781,
+      "sha256": "21fa14e475c3b4bd9d909c57a53b8c67378d60fadc5676b4ac64fae09c02e77b"
+    },
+    {
+      "path": "public/images/products/charmnest-buttons-pins.svg",
+      "bytes": 4057,
+      "sha256": "91e37031900ebfdea40fd57c9401640e8cd01832fec03e0796cd0f023b60e44c"
+    },
+    {
+      "path": "public/images/products/charmnest-hero.png",
+      "bytes": 1776814,
+      "sha256": "0cf0614581aa010a3f4afd0c29a58e893e46de28de3249dcaf7fafd27a0a369b"
+    },
+    {
       "path": "public/js/drop.js",
-      "bytes": 3527,
-      "sha256": "b2fdaebecbec2d8b17c05142056fc939bfffc10d44e5417e5c336c37eb0de20c"
+      "bytes": 3533,
+      "sha256": "39d9359c5136abe401cdb200ec3e522b9af9528447ff31059dd599a7ca8ad48e"
     },
     {
       "path": "public/js/main.js",
-      "bytes": 1883,
-      "sha256": "8cc69802cff2e51116600db1029ad856321c452af12b86f8b48ab85b0061c61a"
+      "bytes": 2579,
+      "sha256": "478ce2d13a0fe73bfd065af3f0d36d1e9cb98dc46ed0939ad004f4da85708c19"
     },
     {
       "path": "public/js/order.js",
-      "bytes": 1847,
-      "sha256": "9972e4dfb5db5602bcca5d68fa942201ee99d668612746beb041fa4609e441c6"
+      "bytes": 9689,
+      "sha256": "1ba75785859a78595d2a35e6bb2674f57a1e80fba0827a197cd1293de9e6d76d"
     },
     {
       "path": "public/js/studio.js",
-      "bytes": 26058,
-      "sha256": "0b7fd67d86bb6965396a13226527412f834ba069d6a8ae5e84ea44679d1bff83"
+      "bytes": 34958,
+      "sha256": "779920504647e1027e7c60ea483c53a8621dfccf1a6745933c98d458840cd780"
     },
     {
       "path": "public/styles/main.css",
-      "bytes": 9909,
-      "sha256": "2f3f8b902f7b55b6f02dd6d48bf0e4e2c9a58f1b60c560b0ab60c0709d43a9cb"
+      "bytes": 11130,
+      "sha256": "441601f9556e30d0823c1310bcb03a073057aa732c2f97377f1c6873eb656435"
     },
     {
       "path": "public/styles/studio.css",
-      "bytes": 6880,
-      "sha256": "8604d314b772bd7bb15e20f057aabd2eb04ae029e14b4011cca3c7c13d025c8b"
+      "bytes": 8435,
+      "sha256": "748fb9b57cf3c0ce3ca7fc1b4437c8d0e16471ba46fad3082fc95beb44e9ec5a"
     },
     {
       "path": "reference/design/studio-design-reference.png",
@@ -386,8 +424,8 @@
     },
     {
       "path": "scripts/build.mjs",
-      "bytes": 22965,
-      "sha256": "1eec905207a5154f1ef7a5db8072a589e381e85c6d6f73ff27a70fe8457a60e0"
+      "bytes": 29921,
+      "sha256": "bece0328eb061229e8fea4a5609114aaafa74532b4690e07c986cd53c544160a"
     },
     {
       "path": "scripts/hash-password.mjs",
@@ -396,18 +434,18 @@
     },
     {
       "path": "scripts/seed-local.mjs",
-      "bytes": 797,
-      "sha256": "7184da33b8c24ba344a138736b7942e593ef57e80f7bc71aa8c5b560f84f6a7c"
+      "bytes": 792,
+      "sha256": "0c1593b0f37e731694799c43d66fe5df400b5209787ab5851e2b7e4a66f1ac52"
     },
     {
       "path": "scripts/validate.mjs",
-      "bytes": 2678,
-      "sha256": "9a43e643c69f3054b6076116bbd5059f300e660a96a38317d48c12cf8dd1c82b"
+      "bytes": 6216,
+      "sha256": "b78315a36daf276788501b4fa78520e3c425035f936921ee14ed527b2c4d882b"
     },
     {
       "path": "src/cloudflare/store.mjs",
-      "bytes": 10048,
-      "sha256": "cdeeb67f02cdebf49d1332f22e3e8311fafe1ffbf1cf2002ce6669eb6449ed5d"
+      "bytes": 14113,
+      "sha256": "1aae9efdf21fb5e7a37b339619977df4125a2334d15e841b9d5e3eead4a910f4"
     },
     {
       "path": "src/cloudflare/worker.mjs",
@@ -416,18 +454,18 @@
     },
     {
       "path": "src/core/api.mjs",
-      "bytes": 12286,
-      "sha256": "08c182b0de24a16872e73a2016bad8cafec85d9f84fe369c337670b29cfdcde6"
+      "bytes": 14571,
+      "sha256": "c06a075b8623dcc41977f15aabecec575dda6d175b38fd3febbfab543bcb5a83"
     },
     {
       "path": "src/core/auth.mjs",
-      "bytes": 4309,
-      "sha256": "25f86fa408e16dd274738d49c92517617f219cc8f420904ca72cdc5c607203ec"
+      "bytes": 4291,
+      "sha256": "22a7d193cbb1e91b4b86310d3c7a66802ce237defcd8b929efae54a916e3638c"
     },
     {
       "path": "src/core/constants.mjs",
-      "bytes": 2408,
-      "sha256": "23a560e9642eea208b9b04b57d615f5628324a5a4e2f0941647954084820fef3"
+      "bytes": 3152,
+      "sha256": "0ce8eaef94423a06766ca67d357fc1c9c8262f8d3d84373211fb81faa2707e04"
     },
     {
       "path": "src/core/flyer.mjs",
@@ -436,33 +474,38 @@
     },
     {
       "path": "src/core/store-utils.mjs",
-      "bytes": 3008,
-      "sha256": "a958bc31ddc9778f76f4c1cd3b789fe5fb768343d4dc2d43a90ba9a3b9d74776"
+      "bytes": 4512,
+      "sha256": "a7518e3bc39acba4355e3db568ac684d2b0efb18fa0a09849db6950cd3ea5f20"
     },
     {
       "path": "src/core/validation.mjs",
-      "bytes": 5937,
-      "sha256": "84b189e2ae78dd7771691e41b18e8ce69e802b26ce8fff0da530e52463843cdd"
+      "bytes": 12804,
+      "sha256": "6005809a00ec558a3405073bb22cd0b1846cf93f8c81e5bafcccd91075d11dfc"
     },
     {
       "path": "src/local/server.mjs",
-      "bytes": 4972,
-      "sha256": "d255bfdf1fea3c8de2355b0fb2ad95ac0f834d533653ed43e4b4857b49190f8b"
+      "bytes": 4924,
+      "sha256": "d659aef887a9f08a23ada422848f9216456abea90b9b661dd4220678477a6f51"
     },
     {
       "path": "src/local/store.mjs",
-      "bytes": 11608,
-      "sha256": "1732184fa2bb65bba0abc87ccdaf47f867d9e7a1c93cd62116f45db618880b7c"
+      "bytes": 15107,
+      "sha256": "d40246f79623e6c9f8a708c0c8fb123c89ae053548efdeb492803a4363d3211f"
     },
     {
       "path": "tests/api.test.mjs",
-      "bytes": 4150,
-      "sha256": "7a81087e7255c47a95ea255ec7bbe5cddfaa731fb053815cfddafda2e71dc4e1"
+      "bytes": 9632,
+      "sha256": "3de2a0a678b5c3a7719b82771a56f7c5906fa12910e0791bce62135c753ee482"
     },
     {
       "path": "tests/auth.test.mjs",
-      "bytes": 790,
-      "sha256": "05389b4f30af4387437845d88e41af60a553cf0f077ec6d9c561152ff01df52d"
+      "bytes": 1116,
+      "sha256": "a1643b652bf1cab8b58c4b0fb12a3f33860df420351c3b489ead851823ae0779"
+    },
+    {
+      "path": "wrangler.toml",
+      "bytes": 472,
+      "sha256": "7d7e79880b439b3e60ddf0b4f09c4913573da39e09495906350d0b4bed22a953"
     }
   ]
 }

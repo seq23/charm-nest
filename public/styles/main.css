@@ -132,3 +132,17 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(248,63,145,.
   h1 { font-size:3rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior:auto !important; transition:none !important; } }
+
+/* Custom product and fulfillment forms */
+.order-fieldset { margin: 24px 0; padding: 22px; border: 1px solid var(--line); border-radius: 20px; background: var(--pink-50); }
+.order-fieldset legend { padding: 0 8px; color: var(--berry); font-size: 1.1rem; font-weight: 900; }
+.check-option { display: flex; align-items: center; gap: 10px; color: var(--berry); font-weight: 800; }
+.check-option input { width: auto; flex: 0 0 auto; }
+.choice-row { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+.local-toggle { margin-bottom: 12px; }
+.estimate-card { margin: 24px 0 16px; padding: 20px; border-radius: 18px; background: linear-gradient(135deg, var(--berry), var(--berry-2)); color: #fff; }
+.estimate-card strong { color: #fff; }
+.estimate-card p { margin: 8px 0 0; }
+.confirmation-card { max-width: 850px; margin-top: 24px; padding: clamp(22px,5vw,42px); border: 2px solid var(--pink-300); border-radius: 28px; background: #fff; box-shadow: var(--shadow); }
+.payment-qr { width: min(260px, 100%); aspect-ratio: 1; object-fit: contain; border: 1px solid var(--line); border-radius: 18px; background: #fff; padding: 10px; }
+@media (max-width: 760px) { .choice-row { display: grid; } }

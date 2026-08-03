@@ -7,38 +7,212 @@ import { LocalStore } from '../src/local/store.mjs';
 import { createApiHandler } from '../src/core/api.mjs';
 import { hashPassword } from '../src/core/auth.mjs';
 
-async function setup(){
-  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'charmnest-'));
-  const store=new LocalStore({dbPath:path.join(dir,'db.sqlite'),uploadsDir:path.join(dir,'uploads')});store.init();
-  const env={APP_ENV:'development',SESSION_SECRET:'0123456789abcdef0123456789abcdef',MAKER_PASSWORD_HASH:await hashPassword('maker-password-123'),ADULT_PASSWORD_HASH:await hashPassword('adult-password-123')};
-  const handle=createApiHandler({store,env});
-  return{dir,store,handle};
+async function setup() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'charmnest-'));
+  const store = new LocalStore({ dbPath: path.join(dir, 'db.sqlite'), uploadsDir: path.join(dir, 'uploads') });
+  store.init();
+  const env = {
+    APP_ENV: 'development',
+    SESSION_SECRET: '0123456789abcdef0123456789abcdef',
+    MAKER_PASSWORD_HASH: await hashPassword('maker-password-123')
+  };
+  return { dir, store, handle: createApiHandler({ store, env }) };
 }
-async function login(handle,username,password){
-  const response=await handle(new Request('http://local/api/auth/login',{method:'POST',headers:{'content-type':'application/json','x-forwarded-for':`${username}-ip`},body:JSON.stringify({username,password})}));
-  assert.equal(response.status,200);
-  const data=await response.json();
-  return{cookie:response.headers.get('set-cookie').split(';')[0],csrf:data.session.csrf,session:data.session};
-}
-function request(url,{method='GET',body,auth}={}){const headers={};if(body)headers['content-type']='application/json';if(auth){headers.cookie=auth.cookie;headers['x-csrf-token']=auth.csrf;}return new Request(`http://local${url}`,{method,headers,body:body?JSON.stringify(body):undefined});}
-const drop={name:'Spooky Vibes',slug:'spooky-vibes',month:'October',year:2026,headline:'Orange and black',publicNotes:'Limited seasonal drop.',privateNotes:'Keep two ghost charms for custom orders.',colors:['Orange','Black'],colorHexes:['#ff7a00','#111111'],featuredCharm:'Ghost',beadedAvailable:true,braidedAvailable:true,quantity:20,schoolPriceCents:200,customPriceCents:300,onlinePriceMinCents:800,onlinePriceMaxCents:1500,releaseDate:'2026-10-01',endDate:'2026-10-31',tiktokUrl:'',etsyUrl:'',status:'published'};
 
-test('maker publishing request is downgraded to review and adult can publish',async()=>{
-  const {handle}=await setup();const maker=await login(handle,'maker','maker-password-123');
-  let response=await handle(request('/api/studio/drops',{method:'POST',body:drop,auth:maker}));assert.equal(response.status,201);let data=await response.json();assert.equal(data.drop.status,'review');
-  const adult=await login(handle,'adult','adult-password-123');
-  response=await handle(request(`/api/studio/drops/${data.drop.id}/status`,{method:'POST',body:{status:'published'},auth:adult}));assert.equal(response.status,200);
-  response=await handle(request('/api/public/drop'));data=await response.json();assert.equal(data.drop.name,'Spooky Vibes');assert.equal('privateNotes' in data.drop,false);
+async function login(handle, username = 'maker', password = 'maker-password-123') {
+  const response = await handle(new Request('http://local/api/auth/login', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-forwarded-for': `${username}-ip` },
+    body: JSON.stringify({ username, password })
+  }));
+  const data = await response.json();
+  if (response.status !== 200) return { response, data };
+  return {
+    response,
+    data,
+    auth: {
+      cookie: response.headers.get('set-cookie').split(';')[0],
+      csrf: data.session.csrf,
+      session: data.session
+    }
+  };
+}
+
+function request(url, { method = 'GET', body, auth } = {}) {
+  const headers = {};
+  if (body) headers['content-type'] = 'application/json';
+  if (auth) {
+    headers.cookie = auth.cookie;
+    headers['x-csrf-token'] = auth.csrf;
+  }
+  return new Request(`http://local${url}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+
+const drop = {
+  name: 'Spooky Vibes', slug: 'spooky-vibes', month: 'October', year: 2026,
+  headline: 'Orange and black', publicNotes: 'Limited seasonal drop.',
+  privateNotes: 'Keep two ghost charms for custom orders.', colors: ['Orange', 'Black'],
+  colorHexes: ['#ff7a00', '#111111'], featuredCharm: 'Ghost', beadedAvailable: true,
+  braidedAvailable: true, quantity: 20, schoolPriceCents: 200, customPriceCents: 300,
+  onlinePriceMinCents: 800, onlinePriceMaxCents: 1500, releaseDate: '2026-10-01',
+  endDate: '2026-10-31', tiktokUrl: '', etsyUrl: '', status: 'published'
+};
+
+const localBracelet = {
+  firstName: 'Ava', contactEmail: 'adult@example.com', productType: 'bracelet',
+  orderType: 'custom', braceletStyle: 'beaded', quantity: 2, colors: ['Pink', 'Gold'],
+  charm: 'Heart', nameWord: 'BESTIE', size: 'standard', giftPackaging: false,
+  neededBy: '', notes: 'Matching pair', fulfillmentMethod: 'pickup', shippingAddress: {}, consent: true
+};
+
+test('Maker Studio performs former adult operations and publishes directly', async () => {
+  const { handle } = await setup();
+  const { auth } = await login(handle);
+  let response = await handle(request('/api/studio/drops', { method: 'POST', body: drop, auth }));
+  assert.equal(response.status, 201);
+  let data = await response.json();
+  assert.equal(data.drop.status, 'published');
+
+  response = await handle(request('/api/public/drop'));
+  data = await response.json();
+  assert.equal(data.drop.name, 'Spooky Vibes');
+  assert.equal('privateNotes' in data.drop, false);
+
+  const photoBody = {
+    originalName: 'bracelet.png', mimeType: 'image/png', altText: 'Bracelet on wrist', caption: '',
+    noFacesConfirmed: true, originalBase64: 'AQID', webBase64: 'AQID', thumbBase64: 'AQID'
+  };
+  response = await handle(request('/api/studio/photos', { method: 'POST', body: photoBody, auth }));
+  data = await response.json();
+  response = await handle(request(`/api/studio/photos/${data.photo.id}/decision`, { method: 'POST', body: { decision: 'approve' }, auth }));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).photo.status, 'approved');
 });
 
-test('photo upload requires explicit no-face confirmation',async()=>{
-  const {handle}=await setup();const maker=await login(handle,'maker','maker-password-123');
-  const bad={originalName:'bracelet.png',mimeType:'image/png',altText:'Bracelet on wrist',caption:'',noFacesConfirmed:false,originalBase64:'AQID',webBase64:'AQID',thumbBase64:'AQID'};
-  let response=await handle(request('/api/studio/photos',{method:'POST',body:bad,auth:maker}));assert.equal(response.status,422);
-  bad.noFacesConfirmed=true;response=await handle(request('/api/studio/photos',{method:'POST',body:bad,auth:maker}));assert.equal(response.status,201);const data=await response.json();assert.equal(data.photo.status,'pending');
+test('Adult login is no longer an active Studio lane', async () => {
+  const { handle } = await setup();
+  const { response } = await login(handle, 'adult', 'maker-password-123');
+  assert.equal(response.status, 401);
 });
 
-test('public special order stores masked email for public receipt',async()=>{
-  const {handle}=await setup();const body={firstName:'Ava',contactEmail:'adult@example.com',braceletStyle:'beaded',quantity:2,colors:['Pink','Gold'],charm:'Heart',nameWord:'BESTIE',size:'standard',neededBy:'',giftPackaging:true,notes:'Matching pair',consent:true};
-  const response=await handle(request('/api/orders',{method:'POST',body}));assert.equal(response.status,201);const data=await response.json();assert.equal(data.order.contactEmail,'a***@example.com');assert.equal(data.order.estimatedCents,2600);
+test('Local bracelet estimates use $2 monthly-drop and $3 custom pricing', async () => {
+  const { handle } = await setup();
+  let response = await handle(request('/api/orders', { method: 'POST', body: localBracelet }));
+  let data = await response.json();
+  assert.equal(response.status, 201);
+  assert.equal(data.order.estimatedCents, 600);
+  assert.equal(data.order.estimateComplete, true);
+
+  response = await handle(request('/api/orders', {
+    method: 'POST',
+    body: { ...localBracelet, orderType: 'monthly-drop', braceletStyle: 'braided', quantity: 2 }
+  }));
+  data = await response.json();
+  assert.equal(data.order.estimatedCents, 400);
+  assert.equal(data.order.estimateComplete, true);
+});
+
+test('Shipping requires a complete address and public receipts do not expose it', async () => {
+  const { handle } = await setup();
+  let response = await handle(request('/api/orders', {
+    method: 'POST',
+    body: { ...localBracelet, fulfillmentMethod: 'shipping', shippingAddress: {} }
+  }));
+  assert.equal(response.status, 422);
+
+  response = await handle(request('/api/orders', {
+    method: 'POST',
+    body: {
+      ...localBracelet,
+      fulfillmentMethod: 'shipping',
+      shippingAddress: { address1: '123 Main St', address2: 'Apt 2', city: 'Memphis', state: 'TN', zip: '38103' }
+    }
+  }));
+  const data = await response.json();
+  assert.equal(response.status, 201);
+  assert.equal(data.order.contactEmail, 'a***@example.com');
+  assert.equal('shippingAddress' in data.order, false);
+  assert.equal(data.order.estimateComplete, false);
+});
+
+test('Button orders remain quote-required until pricing is configured', async () => {
+  const { handle, store } = await setup();
+  const buttonOrder = {
+    firstName: 'Nia', contactEmail: 'parent@example.com', productType: 'button', quantity: 25,
+    buttonOccasion: 'Graduation', buttonText: 'Class of 2026', themeColors: 'Pink and gold',
+    artworkReady: true, designInstructions: 'Round buttons with stars.', neededBy: '2026-05-20',
+    notes: '', fulfillmentMethod: 'pickup', shippingAddress: {}, consent: true
+  };
+  let response = await handle(request('/api/orders', { method: 'POST', body: buttonOrder }));
+  let data = await response.json();
+  assert.equal(response.status, 201);
+  assert.equal(data.order.productType, 'button');
+  assert.equal(data.order.estimateComplete, false);
+
+  store.updateSettings({ buttonUnitCents: 250, buttonSetupFeeCents: 500 }, { username: 'maker', role: 'maker' });
+  response = await handle(request('/api/orders', { method: 'POST', body: buttonOrder }));
+  data = await response.json();
+  assert.equal(data.order.estimateComplete, true);
+  assert.equal(data.order.estimatedCents, 6750);
+});
+
+test('Maker sees private shipping data and can record cash or Cash App payment', async () => {
+  const { handle, store } = await setup();
+  store.updateSettings({ shippedCustomBraceletCents: 500, shippingFeeCents: 600 }, { username: 'maker', role: 'maker' });
+  const response = await handle(request('/api/orders', {
+    method: 'POST',
+    body: {
+      ...localBracelet,
+      fulfillmentMethod: 'shipping',
+      shippingAddress: { address1: '123 Main St', address2: '', city: 'Memphis', state: 'TN', zip: '38103' }
+    }
+  }));
+  const created = await response.json();
+  const { auth } = await login(handle);
+
+  let studioResponse = await handle(request('/api/studio/dashboard', { auth }));
+  let dashboard = await studioResponse.json();
+  const order = dashboard.orders.find(item => item.id === created.order.id);
+  assert.equal(order.shippingAddress.address1, '123 Main St');
+
+  studioResponse = await handle(request(`/api/studio/orders/${order.id}/payment`, {
+    method: 'POST',
+    body: { paymentStatus: 'received', paymentMethod: 'cashapp', amountPaidCents: 1600, paidAt: '2026-08-03', paymentNote: 'Confirmed in Cash App.' },
+    auth
+  }));
+  const paid = await studioResponse.json();
+  assert.equal(studioResponse.status, 200);
+  assert.equal(paid.order.paymentStatus, 'received');
+  assert.equal(paid.order.paymentMethod, 'cashapp');
+  assert.equal(paid.order.amountPaidCents, 1600);
+});
+
+test('Photo upload still requires explicit no-face confirmation', async () => {
+  const { handle } = await setup();
+  const { auth } = await login(handle);
+  const body = {
+    originalName: 'bracelet.png', mimeType: 'image/png', altText: 'Bracelet on wrist', caption: '',
+    noFacesConfirmed: false, originalBase64: 'AQID', webBase64: 'AQID', thumbBase64: 'AQID'
+  };
+  let response = await handle(request('/api/studio/photos', { method: 'POST', body, auth }));
+  assert.equal(response.status, 422);
+  body.noFacesConfirmed = true;
+  response = await handle(request('/api/studio/photos', { method: 'POST', body, auth }));
+  assert.equal(response.status, 201);
+});
+
+test('Legacy bracelet orders remain readable after migration', async () => {
+  const { store } = await setup();
+  const now = new Date().toISOString();
+  store.db.prepare('INSERT INTO orders(id,first_name,contact_email,bracelet_style,quantity,colors_json,charm,name_word,size,needed_by,gift_packaging,notes,estimated_cents,status,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(
+    'legacy_order', 'Mia', 'adult@example.com', 'braided', 1, '["Blue"]', '', '', 'standard', '', 0, 'Old order', 600, 'new', now, now
+  );
+  const order = store.getOrder('legacy_order', { includePrivate: true });
+  assert.equal(order.productType, 'bracelet');
+  assert.equal(order.braceletStyle, 'braided');
+  assert.deepEqual(order.colors, ['Blue']);
 });

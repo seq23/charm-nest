@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS } from './constants.mjs';
+import { DEFAULT_SETTINGS, NUMERIC_SETTING_KEYS } from './constants.mjs';
 
 export function nowIso() {
   return new Date().toISOString();
@@ -69,26 +69,54 @@ export function serializePhoto(row) {
   };
 }
 
-export function serializeOrder(row, includeEmail = true) {
-  if (!row) return null;
+function legacyProductOptions(row) {
   return {
+    braceletStyle: row.bracelet_style || '',
+    colors: decodeJson(row.colors_json, []),
+    charm: row.charm || '',
+    nameWord: row.name_word || '',
+    size: row.size || 'standard',
+    giftPackaging: Boolean(row.gift_packaging)
+  };
+}
+
+export function serializeOrder(row, { includePrivate = false } = {}) {
+  if (!row) return null;
+  const productOptions = decodeJson(row.product_options_json, null) || legacyProductOptions(row);
+  const shippingAddress = decodeJson(row.shipping_address_json, {});
+  const order = {
     id: row.id,
     firstName: row.first_name,
-    contactEmail: includeEmail ? row.contact_email : maskEmail(row.contact_email),
-    braceletStyle: row.bracelet_style,
+    contactEmail: includePrivate ? row.contact_email : maskEmail(row.contact_email),
+    productType: row.product_type || 'bracelet',
+    orderType: row.order_type || 'custom',
+    productOptions,
+    braceletStyle: productOptions.braceletStyle || row.bracelet_style || '',
+    colors: productOptions.colors || decodeJson(row.colors_json, []),
+    charm: productOptions.charm || row.charm || '',
+    nameWord: productOptions.nameWord || row.name_word || '',
+    size: productOptions.size || row.size || 'standard',
+    giftPackaging: Boolean(productOptions.giftPackaging ?? row.gift_packaging),
     quantity: row.quantity,
-    colors: decodeJson(row.colors_json, []),
-    charm: row.charm,
-    nameWord: row.name_word,
-    size: row.size,
     neededBy: row.needed_by,
-    giftPackaging: Boolean(row.gift_packaging),
     notes: row.notes,
+    fulfillmentMethod: row.fulfillment_method || 'pickup',
     estimatedCents: row.estimated_cents,
+    estimateComplete: row.estimate_complete === undefined ? true : Boolean(row.estimate_complete),
+    estimateNote: row.estimate_note || '',
     status: row.status,
+    paymentStatus: row.payment_status || 'unpaid',
+    paymentMethod: row.payment_method || '',
+    amountPaidCents: row.amount_paid_cents || 0,
+    paidAt: row.paid_at || '',
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
+  if (includePrivate) {
+    order.shippingAddress = shippingAddress;
+    order.paymentNote = row.payment_note || '';
+  }
+  return order;
 }
 
 export function maskEmail(value) {
@@ -100,5 +128,10 @@ export function maskEmail(value) {
 export function mergeSettings(rows) {
   const values = { ...DEFAULT_SETTINGS };
   for (const row of rows) values[row.key] = row.value;
+  for (const key of NUMERIC_SETTING_KEYS) {
+    if (values[key] === '') continue;
+    const number = Number(values[key]);
+    values[key] = Number.isFinite(number) ? number : '';
+  }
   return values;
 }

@@ -22,8 +22,8 @@ function loadVars(filePath) {
 }
 
 const env={...loadVars(path.join(root,'.dev.vars')),...process.env,APP_ENV:process.env.APP_ENV||loadVars(path.join(root,'.dev.vars')).APP_ENV||'development'};
-if (!env.MAKER_PASSWORD_HASH||!env.ADULT_PASSWORD_HASH||!env.SESSION_SECRET) {
-  console.error('Missing MAKER_PASSWORD_HASH, ADULT_PASSWORD_HASH, or SESSION_SECRET. Copy .dev.vars.example to .dev.vars and configure it.');
+if (!env.MAKER_PASSWORD_HASH||!env.SESSION_SECRET) {
+  console.error('Missing MAKER_PASSWORD_HASH or SESSION_SECRET. Copy .dev.vars.example to .dev.vars and configure it.');
   process.exit(1);
 }
 if (!fs.existsSync(dist)) {

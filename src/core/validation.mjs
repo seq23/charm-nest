@@ -1,10 +1,87 @@
-import { DROP_STATUSES, PHOTO_STATUSES, ORDER_STATUSES, LOGO_OPTIONS } from './constants.mjs';
+import {
+  DROP_STATUSES,
+  FULFILLMENT_METHODS,
+  LOGO_OPTIONS,
+  NUMERIC_SETTING_KEYS,
+  ORDER_STATUSES,
+  PAYMENT_METHODS,
+  PAYMENT_STATUSES,
+  PHOTO_STATUSES,
+  PRODUCT_TYPES
+} from './constants.mjs';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
 const urlPattern = /^https:\/\//u;
+const zipPattern = /^\d{5}(?:-\d{4})?$/u;
 
 export function cleanText(value, max = 500) {
   return String(value ?? '').replace(/[<>]/gu, '').trim().slice(0, max);
+}
+
+function optionalCents(value) {
+  if (value === '' || value === null || value === undefined) return null;
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 0) return null;
+  return Math.round(number);
+}
+
+function settingCents(settings, key) {
+  return optionalCents(settings?.[key]);
+}
+
+function formatMoney(cents) {
+  return `$${(Number(cents || 0) / 100).toFixed(2)}`;
+}
+
+export function calculateOrderEstimate(data, settings = {}) {
+  let estimatedCents = 0;
+  const missing = [];
+
+  if (data.productType === 'bracelet') {
+    if (data.fulfillmentMethod === 'shipping') {
+      const unit = settingCents(settings, 'shippedCustomBraceletCents');
+      if (unit === null) missing.push('shipped custom-bracelet unit price');
+      else estimatedCents += unit * data.quantity;
+    } else {
+      const key = data.orderType === 'monthly-drop' ? 'localDropBraceletCents' : 'localCustomBraceletCents';
+      const fallback = data.orderType === 'monthly-drop' ? 200 : 300;
+      estimatedCents += (settingCents(settings, key) ?? fallback) * data.quantity;
+    }
+
+    if (data.productOptions.giftPackaging) {
+      const fee = settingCents(settings, 'giftPackagingFeeCents');
+      if (fee === null) missing.push('gift-packaging price');
+      else estimatedCents += fee;
+    }
+  }
+
+  if (data.productType === 'button') {
+    const unit = settingCents(settings, 'buttonUnitCents');
+    const setup = settingCents(settings, 'buttonSetupFeeCents');
+    if (unit === null) missing.push('button/pin unit price');
+    else estimatedCents += unit * data.quantity;
+    if (setup === null) missing.push('button/pin setup or design fee');
+    else estimatedCents += setup;
+  }
+
+  if (data.fulfillmentMethod === 'local-delivery') {
+    const fee = settingCents(settings, 'localDeliveryFeeCents');
+    if (fee === null) missing.push('local-delivery fee');
+    else estimatedCents += fee;
+  }
+
+  if (data.fulfillmentMethod === 'shipping') {
+    const fee = settingCents(settings, 'shippingFeeCents');
+    if (fee === null) missing.push('shipping and handling fee');
+    else estimatedCents += fee;
+  }
+
+  const estimateComplete = missing.length === 0;
+  const estimateNote = estimateComplete
+    ? `Estimated total: ${formatMoney(estimatedCents)}. CharmNest will confirm availability and the final amount.`
+    : `Known subtotal: ${formatMoney(estimatedCents)}. Final ${missing.join(', ')} must be confirmed before payment.`;
+
+  return { estimatedCents, estimateComplete, estimateNote, missingEstimateFields: missing };
 }
 
 export function validateDrop(input, partial = false) {
@@ -25,8 +102,8 @@ export function validateDrop(input, partial = false) {
     quantity: Math.max(0, Math.min(999, Number(input.quantity || 0))),
     schoolPriceCents: Math.max(0, Number(input.schoolPriceCents ?? 200)),
     customPriceCents: Math.max(0, Number(input.customPriceCents ?? 300)),
-    onlinePriceMinCents: Math.max(0, Number(input.onlinePriceMinCents ?? 600)),
-    onlinePriceMaxCents: Math.max(0, Number(input.onlinePriceMaxCents ?? 1500)),
+    onlinePriceMinCents: Math.max(0, Number(input.onlinePriceMinCents ?? 0)),
+    onlinePriceMaxCents: Math.max(0, Number(input.onlinePriceMaxCents ?? 0)),
     releaseDate: cleanText(input.releaseDate, 20),
     endDate: cleanText(input.endDate, 20),
     tiktokUrl: cleanText(input.tiktokUrl, 300),
@@ -59,36 +136,100 @@ export function validatePhoto(input) {
   return { data, errors };
 }
 
-export function validateOrder(input) {
+export function validateOrder(input, settings = {}) {
   const errors = [];
-  const quantity = Math.max(1, Math.min(25, Number(input.quantity || 1)));
-  const style = ['beaded', 'braided', 'mixed'].includes(input.braceletStyle) ? input.braceletStyle : '';
+  const productType = PRODUCT_TYPES.includes(input.productType) ? input.productType : '';
+  const rawQuantity = Number(input.quantity);
+  const quantityLimit = productType === 'button' ? 500 : 25;
+  const quantity = Number.isInteger(rawQuantity) && rawQuantity >= 1 && rawQuantity <= quantityLimit ? rawQuantity : 1;
+  const fulfillmentMethod = FULFILLMENT_METHODS.includes(input.fulfillmentMethod) ? input.fulfillmentMethod : '';
+  const orderType = productType === 'bracelet' && ['monthly-drop', 'custom'].includes(input.orderType) ? input.orderType : 'custom';
+  const braceletStyle = ['beaded', 'braided', 'mixed'].includes(input.braceletStyle) ? input.braceletStyle : '';
+  const shippingAddress = {
+    address1: cleanText(input.shippingAddress?.address1, 160),
+    address2: cleanText(input.shippingAddress?.address2, 160),
+    city: cleanText(input.shippingAddress?.city, 80),
+    state: cleanText(input.shippingAddress?.state, 40),
+    zip: cleanText(input.shippingAddress?.zip, 12)
+  };
+  const productOptions = productType === 'button'
+    ? {
+        occasion: cleanText(input.buttonOccasion, 80),
+        buttonText: cleanText(input.buttonText, 160),
+        themeColors: cleanText(input.themeColors, 160),
+        artworkReady: input.artworkReady === true,
+        designInstructions: cleanText(input.designInstructions, 1600)
+      }
+    : {
+        braceletStyle,
+        colors: Array.isArray(input.colors) ? input.colors.map(value => cleanText(value, 40)).filter(Boolean).slice(0, 3) : [],
+        charm: cleanText(input.charm, 80),
+        nameWord: cleanText(input.nameWord, 18),
+        size: ['small', 'standard', 'large'].includes(input.size) ? input.size : 'standard',
+        giftPackaging: Boolean(input.giftPackaging)
+      };
   const data = {
     firstName: cleanText(input.firstName, 80),
     contactEmail: cleanText(input.contactEmail, 160).toLowerCase(),
-    braceletStyle: style,
+    productType,
+    orderType,
     quantity,
-    colors: Array.isArray(input.colors) ? input.colors.map(value => cleanText(value, 40)).filter(Boolean).slice(0, 3) : [],
-    charm: cleanText(input.charm, 80),
-    nameWord: cleanText(input.nameWord, 18),
-    size: ['small', 'standard', 'large'].includes(input.size) ? input.size : 'standard',
     neededBy: cleanText(input.neededBy, 20),
-    giftPackaging: Boolean(input.giftPackaging),
     notes: cleanText(input.notes, 1000),
+    fulfillmentMethod,
+    shippingAddress,
+    productOptions,
     consent: input.consent === true,
     status: ORDER_STATUSES.includes(input.status) ? input.status : 'new'
   };
+
   if (!data.firstName) errors.push('First name is required.');
   if (!emailPattern.test(data.contactEmail)) errors.push('A valid adult-managed contact email is required.');
-  if (!data.braceletStyle) errors.push('Choose a bracelet style.');
-  if (data.colors.length < 1) errors.push('Choose at least one color.');
+  if (!data.productType) errors.push('Choose a product type.');
+  if (!Number.isInteger(rawQuantity) || rawQuantity < 1 || rawQuantity > quantityLimit) errors.push(`Quantity must be between 1 and ${quantityLimit}.`);
+  if (!data.fulfillmentMethod) errors.push('Choose pickup, local delivery, or shipping.');
   if (!data.consent) errors.push('Consent acknowledgment is required.');
-  const base = style === 'braided' ? 600 : style === 'mixed' ? 1600 : 800;
-  let estimatedCents = base * quantity;
-  if (data.nameWord) estimatedCents += 200 * quantity;
-  if (data.charm && style !== 'braided') estimatedCents += 200 * quantity;
-  if (data.giftPackaging) estimatedCents += 200;
-  return { data: { ...data, estimatedCents }, errors };
+
+  if (data.productType === 'bracelet') {
+    if (!productOptions.braceletStyle) errors.push('Choose a bracelet style.');
+    if (productOptions.colors.length < 1) errors.push('Choose at least one bracelet color.');
+    if (data.orderType === 'monthly-drop' && productOptions.braceletStyle === 'mixed') errors.push('Monthly-drop bracelets must be beaded or braided.');
+    if (data.orderType === 'monthly-drop' && data.fulfillmentMethod === 'shipping') errors.push('Monthly-drop bracelets are local only. Choose a custom bracelet for shipping.');
+  }
+
+  if (data.productType === 'button') {
+    if (!productOptions.occasion) errors.push('Choose the button or pin occasion.');
+    if (!productOptions.designInstructions && !productOptions.buttonText) errors.push('Add button text or design instructions.');
+  }
+
+  if (data.fulfillmentMethod === 'shipping') {
+    if (!shippingAddress.address1) errors.push('Shipping address line 1 is required.');
+    if (!shippingAddress.city) errors.push('Shipping city is required.');
+    if (!shippingAddress.state) errors.push('Shipping state is required.');
+    if (!zipPattern.test(shippingAddress.zip)) errors.push('Enter a valid U.S. ZIP code.');
+  }
+
+  return { data: { ...data, ...calculateOrderEstimate(data, settings) }, errors };
+}
+
+export function validatePayment(input) {
+  const errors = [];
+  const paymentStatus = PAYMENT_STATUSES.includes(input.paymentStatus) ? input.paymentStatus : 'unpaid';
+  const paymentMethod = PAYMENT_METHODS.includes(input.paymentMethod) ? input.paymentMethod : '';
+  const rawAmountPaidCents = Number(input.amountPaidCents || 0);
+  const amountPaidCents = Number.isFinite(rawAmountPaidCents) && rawAmountPaidCents >= 0
+    ? Math.round(rawAmountPaidCents)
+    : 0;
+  const data = {
+    paymentStatus,
+    paymentMethod: paymentStatus === 'received' ? paymentMethod : '',
+    amountPaidCents: paymentStatus === 'received' ? amountPaidCents : 0,
+    paidAt: paymentStatus === 'received' ? cleanText(input.paidAt, 40) : '',
+    paymentNote: cleanText(input.paymentNote, 500)
+  };
+  if (paymentStatus === 'received' && !paymentMethod) errors.push('Choose cash or Cash App.');
+  if (paymentStatus === 'received' && (!Number.isFinite(rawAmountPaidCents) || amountPaidCents <= 0)) errors.push('Enter a valid amount received.');
+  return { data, errors };
 }
 
 export function validateSettings(input) {
@@ -99,14 +240,27 @@ export function validateSettings(input) {
     tiktokUrl: cleanText(input.tiktokUrl, 300),
     tiktokHandle: cleanText(input.tiktokHandle, 80),
     etsyUrl: cleanText(input.etsyUrl, 300),
-    activeLogo: allowedLogos.has(input.activeLogo) ? input.activeLogo : 'placeholder',
+    cashAppHandle: cleanText(input.cashAppHandle, 80),
+    cashAppQrUrl: cleanText(input.cashAppQrUrl, 300),
+    paymentInstructions: cleanText(input.paymentInstructions, 800),
+    activeLogo: allowedLogos.has(input.activeLogo) ? input.activeLogo : 'logo-03',
     schoolDropNotice: cleanText(input.schoolDropNotice, 1200),
     schoolPricingNotice: cleanText(input.schoolPricingNotice, 1200)
   };
   const errors = [];
-  for (const [key, value] of Object.entries(data)) {
-    if ((key.endsWith('Url')) && value && !urlPattern.test(value)) errors.push(`${key} must begin with https://.`);
+  for (const key of NUMERIC_SETTING_KEYS) {
+    const raw = input[key];
+    if (raw === '' || raw === null || raw === undefined) data[key] = '';
+    else {
+      const cents = optionalCents(raw);
+      if (cents === null) errors.push(`${key} must be a non-negative amount in cents or left blank.`);
+      else data[key] = cents;
+    }
   }
+  for (const [key, value] of Object.entries(data)) {
+    if (key.endsWith('Url') && value && key !== 'cashAppQrUrl' && !urlPattern.test(value)) errors.push(`${key} must begin with https://.`);
+  }
+  if (data.cashAppQrUrl && !data.cashAppQrUrl.startsWith('/media/') && !urlPattern.test(data.cashAppQrUrl)) errors.push('Cash App QR URL must be an uploaded media path or begin with https://.');
   if (data.contactEmail && !emailPattern.test(data.contactEmail)) errors.push('Contact email is invalid.');
   return { data, errors };
 }

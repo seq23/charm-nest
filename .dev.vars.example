@@ -1,6 +1,5 @@
-# Generate values with: npm run auth:hash -- "your password"
+# Generate with: npm run auth:hash -- "your Studio password"
 MAKER_PASSWORD_HASH=pbkdf2$100000$REPLACE_SALT$REPLACE_HASH
-ADULT_PASSWORD_HASH=pbkdf2$100000$REPLACE_SALT$REPLACE_HASH
 SESSION_SECRET=replace-with-at-least-32-random-characters
 APP_ENV=development
 PORT=8788

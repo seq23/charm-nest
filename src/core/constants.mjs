@@ -1,7 +1,11 @@
 export const DROP_STATUSES = Object.freeze(['draft', 'review', 'published', 'sold-out', 'archived']);
 export const PHOTO_STATUSES = Object.freeze(['pending', 'approved', 'rejected', 'archived']);
 export const ORDER_STATUSES = Object.freeze(['new', 'confirmed', 'making', 'ready', 'completed', 'cancelled']);
-export const ROLES = Object.freeze(['maker', 'adult']);
+export const PAYMENT_STATUSES = Object.freeze(['unpaid', 'received']);
+export const PAYMENT_METHODS = Object.freeze(['cash', 'cashapp']);
+export const PRODUCT_TYPES = Object.freeze(['bracelet', 'button']);
+export const FULFILLMENT_METHODS = Object.freeze(['pickup', 'local-delivery', 'shipping']);
+export const ROLES = Object.freeze(['maker']);
 
 export const DEFAULT_SETTINGS = Object.freeze({
   siteName: 'CharmNest',
@@ -12,8 +16,19 @@ export const DEFAULT_SETTINGS = Object.freeze({
   tiktokUrl: 'https://www.tiktok.com/@da.prettiest55',
   tiktokHandle: '@da.prettiest55',
   etsyUrl: '',
+  cashAppHandle: '',
+  cashAppQrUrl: '',
+  paymentInstructions: 'Pay only after CharmNest confirms your order and total. Include your order reference in the payment note.',
+  localDropBraceletCents: 200,
+  localCustomBraceletCents: 300,
+  localDeliveryFeeCents: '',
+  shippedCustomBraceletCents: '',
+  shippingFeeCents: '',
+  buttonUnitCents: '',
+  buttonSetupFeeCents: '',
+  giftPackagingFeeCents: '',
   schoolDropNotice: 'Featured colors, charms, quantities, release dates, and availability may change. Some designs are limited and may sell out. Check CharmNest on TikTok for the latest confirmed drop.',
-  schoolPricingNotice: 'School pricing applies only to eligible local school sales. Online custom products, gift packaging, shipping, marketplace fees, and larger orders use separate online pricing.',
+  schoolPricingNotice: 'School pricing applies only to eligible local school sales. Shipped custom products, gift packaging, delivery, and larger orders may use separate pricing.',
   photoRule: 'Hands and wrists are allowed. Faces, partial faces, and face reflections are not allowed on public pages.'
 });
 
@@ -28,17 +43,23 @@ export const LOGO_OPTIONS = Object.freeze([
 ]);
 
 export const PUBLIC_PRICING = Object.freeze({
-  schoolDropCents: 200,
-  schoolCustomCents: 300,
-  online: [
-    ['Custom braided bracelet', '$6–$8'],
-    ['Custom elastic color bracelet', '$8–$10'],
-    ['Name bracelet', '$10–$12'],
-    ['Bead-and-charm bracelet', '$12–$15'],
-    ['Matching braided pair', '$12–$16'],
-    ['Matching charm pair', '$20–$24'],
-    ['Mixed bestie set', '$16–$20'],
-    ['Bracelet stack', '$24–$36'],
-    ['Party packs', '$40–$90']
+  localDropBraceletCents: 200,
+  localCustomBraceletCents: 300,
+  quoteRequired: [
+    'Local delivery',
+    'Shipped custom bracelets',
+    'Custom buttons and pins',
+    'Gift packaging'
   ]
 });
+
+export const NUMERIC_SETTING_KEYS = Object.freeze([
+  'localDropBraceletCents',
+  'localCustomBraceletCents',
+  'localDeliveryFeeCents',
+  'shippedCustomBraceletCents',
+  'shippingFeeCents',
+  'buttonUnitCents',
+  'buttonSetupFeeCents',
+  'giftPackagingFeeCents'
+]);

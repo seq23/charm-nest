@@ -73,7 +73,7 @@ export async function verifySession(token, secret) {
     if (!timingSafeEqual(expected, actual)) return null;
     const payload = JSON.parse(decoder.decode(base64UrlToBytes(encoded)));
     if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) return null;
-    if (!['maker', 'adult'].includes(payload.role)) return null;
+    if (payload.role !== 'maker') return null;
     return payload;
   } catch {
     return null;
