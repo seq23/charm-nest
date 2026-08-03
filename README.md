@@ -46,4 +46,4 @@ Before deploying this version to the current production database, apply the new 
 
 - `migrations/0002_orders_fulfillment_payments.sql`
 
-Do not deploy the new Worker order routes against an unmigrated production D1 database.
+Do not deploy the new Worker order routes against an unmigrated production D1 database
