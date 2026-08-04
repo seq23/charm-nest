@@ -1,6 +1,14 @@
 import { createSession, verifyPassword, verifySession, parseCookies, sessionCookie, clearSessionCookie } from './auth.mjs';
-import { DROP_STATUSES, LOGO_OPTIONS, ORDER_STATUSES } from './constants.mjs';
-import { validateDrop, validateOrder, validatePayment, validatePhoto, validateSettings } from './validation.mjs';
+import { DROP_STATUSES, LOGO_OPTIONS, ORDER_STATUSES, PHOTO_PLACEMENTS } from './constants.mjs';
+import {
+  validateDrop,
+  validateInternalNote,
+  validateOrder,
+  validatePayment,
+  validatePhoto,
+  validatePhotoUpdate,
+  validateSettings
+} from './validation.mjs';
 import { createFlyerSvg } from './flyer.mjs';
 
 const JSON_HEADERS = {
@@ -19,6 +27,10 @@ function error(message, status = 400, details = []) {
 
 function ok(data = {}, status = 200, headers = {}) {
   return json({ ok: true, ...data }, status, headers);
+}
+
+function saved(data = {}, status = 200) {
+  return ok({ ...data, savedAt: new Date().toISOString() }, status);
 }
 
 function clientKey(request) {
@@ -74,6 +86,18 @@ function publicDrop(drop) {
   return safe;
 }
 
+function publicPhoto(photo) {
+  return {
+    id: photo.id,
+    altText: photo.altText,
+    caption: photo.caption,
+    placement: photo.placement,
+    placementDropId: photo.placementDropId,
+    webUrl: photo.webUrl,
+    thumbUrl: photo.thumbUrl
+  };
+}
+
 function publicPaymentSettings(settings, order) {
   const available = Boolean(settings.cashAppHandle || settings.cashAppQrUrl);
   return {
@@ -85,6 +109,36 @@ function publicPaymentSettings(settings, order) {
     amountCents: order.estimatedCents,
     waitForConfirmation: !order.estimateComplete
   };
+}
+
+function filterOrders(orders, url) {
+  let filtered = [...orders];
+  const view = url.searchParams.get('view') || '';
+  if (view === 'work') filtered = filtered.filter(order => ['new', 'confirmed', 'making'].includes(order.status));
+  if (view === 'ready') filtered = filtered.filter(order => order.status === 'ready');
+  if (view === 'paid') filtered = filtered.filter(order => order.paymentStatus === 'received');
+  if (view === 'archive') filtered = filtered.filter(order => ['completed', 'cancelled'].includes(order.status));
+
+  const exactFilters = [
+    ['status', 'status'],
+    ['paymentStatus', 'paymentStatus'],
+    ['paymentMethod', 'paymentMethod'],
+    ['productType', 'productType'],
+    ['requestedEmployee', 'requestedEmployee'],
+    ['fulfillmentMethod', 'fulfillmentMethod']
+  ];
+  for (const [parameter, property] of exactFilters) {
+    const value = url.searchParams.get(parameter);
+    if (parameter === 'requestedEmployee' && value === 'none') filtered = filtered.filter(order => !order.requestedEmployee);
+    else if (value) filtered = filtered.filter(order => String(order[property] || '') === value);
+  }
+
+  const query = String(url.searchParams.get('q') || '').trim().toLowerCase();
+  if (query) {
+    filtered = filtered.filter(order => [order.id, order.firstName, order.contactEmail, order.phone]
+      .some(value => String(value || '').toLowerCase().includes(query)));
+  }
+  return filtered;
 }
 
 async function photoDataUri(store, photo) {
@@ -107,6 +161,13 @@ export function createApiHandler({ store, env }) {
         const settings = await store.getSettings();
         const active = LOGO_OPTIONS.find(item => item.id === settings.activeLogo) || LOGO_OPTIONS[0];
         return ok({ settings: { ...settings, activeLogoUrl: active.url } });
+      }
+
+      if (path === '/api/public/photos' && method === 'GET') {
+        const photos = (await store.listPhotos({ includePrivate: false }))
+          .filter(photo => photo.placement && photo.placement !== 'unassigned')
+          .map(publicPhoto);
+        return ok({ photos });
       }
 
       if (path === '/api/public/drop' && method === 'GET') {
@@ -185,7 +246,8 @@ export function createApiHandler({ store, env }) {
             orders,
             activity,
             settings,
-            logoOptions: LOGO_OPTIONS
+            logoOptions: LOGO_OPTIONS,
+            photoPlacements: PHOTO_PLACEMENTS
           });
         }
 
@@ -196,7 +258,7 @@ export function createApiHandler({ store, env }) {
         if (path === '/api/studio/drops' && method === 'POST') {
           const { data, errors } = validateDrop(await bodyJson(request, 100_000));
           if (errors.length) return error('Please correct the drop form.', 422, errors);
-          return ok({ drop: await store.createDrop(data, session) }, 201);
+          return saved({ drop: await store.createDrop(data, session) }, 201);
         }
 
         const dropMatch = path.match(/^\/api\/studio\/drops\/([^/]+)$/u);
@@ -210,7 +272,7 @@ export function createApiHandler({ store, env }) {
           if (errors.length) return error('Please correct the drop form.', 422, errors);
           const current = await store.getDrop(dropMatch[1]);
           if (!current) return error('Drop not found.', 404);
-          return ok({ drop: await store.updateDrop(dropMatch[1], data, session) });
+          return saved({ drop: await store.updateDrop(dropMatch[1], data, session) });
         }
 
         const statusMatch = path.match(/^\/api\/studio\/drops\/([^/]+)\/status$/u);
@@ -219,7 +281,7 @@ export function createApiHandler({ store, env }) {
           const status = String(input.status || '');
           if (!DROP_STATUSES.includes(status)) return error('Invalid drop status.', 422);
           const drop = await store.setDropStatus(statusMatch[1], status, session);
-          return drop ? ok({ drop }) : error('Drop not found.', 404);
+          return drop ? saved({ drop }) : error('Drop not found.', 404);
         }
 
         if (path === '/api/studio/photos' && method === 'GET') {
@@ -230,6 +292,7 @@ export function createApiHandler({ store, env }) {
           const input = await bodyJson(request, 25_000_000);
           const { data, errors } = validatePhoto(input);
           if (errors.length) return error('Please correct the photo details.', 422, errors);
+          if (data.placement === 'monthly-drop' && !await store.getDrop(data.placementDropId)) return error('The selected drop was not found.', 422);
           const variants = {
             original: base64Bytes(input.originalBase64),
             web: base64Bytes(input.webBase64),
@@ -237,7 +300,19 @@ export function createApiHandler({ store, env }) {
           };
           if (!variants.original.length || !variants.web.length || !variants.thumb.length) return error('All photo versions are required.', 422);
           if (variants.original.length > 8_000_000) return error('The original photo must be 8 MB or smaller.', 413);
-          return ok({ photo: await store.savePhoto({ meta: data, variants }, session) }, 201);
+          let photo = await store.savePhoto({ meta: data, variants }, session);
+          if (data.placement === 'monthly-drop') photo = await store.updatePhoto(photo.id, data, session);
+          return saved({ photo }, 201);
+        }
+
+        const photoMatch = path.match(/^\/api\/studio\/photos\/([^/]+)$/u);
+        if (photoMatch && method === 'PUT') {
+          const input = await bodyJson(request, 40_000);
+          const { data, errors } = validatePhotoUpdate(input);
+          if (errors.length) return error('Please correct the photo details.', 422, errors);
+          if (data.placement === 'monthly-drop' && !await store.getDrop(data.placementDropId)) return error('The selected drop was not found.', 422);
+          const photo = await store.updatePhoto(photoMatch[1], data, session);
+          return photo ? saved({ photo }) : error('Photo not found.', 404);
         }
 
         const photoDecision = path.match(/^\/api\/studio\/photos\/([^/]+)\/decision$/u);
@@ -246,7 +321,7 @@ export function createApiHandler({ store, env }) {
           const decision = ['approve', 'reject', 'archive'].includes(input.decision) ? input.decision : '';
           if (!decision) return error('Invalid photo decision.', 422);
           const photo = await store.approvePhoto(photoDecision[1], decision, session);
-          return photo ? ok({ photo }) : error('Photo not found.', 404);
+          return photo ? saved({ photo }) : error('Photo not found.', 404);
         }
 
         const attachMatch = path.match(/^\/api\/studio\/drops\/([^/]+)\/photos$/u);
@@ -255,13 +330,13 @@ export function createApiHandler({ store, env }) {
           const photo = await store.getPhoto(input.photoId);
           if (!photo) return error('Photo not found.', 404);
           if (photo.status !== 'approved') return error('Approve the photo before attaching it to a public drop.', 422);
-          return ok({ drop: await store.attachPhoto(attachMatch[1], photo.id, { isCover: Boolean(input.isCover) }, session) });
+          return saved({ drop: await store.attachPhoto(attachMatch[1], photo.id, { isCover: Boolean(input.isCover) }, session) });
         }
 
         if (path === '/api/studio/settings' && method === 'PUT') {
           const { data, errors } = validateSettings(await bodyJson(request, 100_000));
           if (errors.length) return error('Please correct the settings.', 422, errors);
-          return ok({ settings: await store.updateSettings(data, session) });
+          return saved({ settings: await store.updateSettings(data, session) });
         }
 
         if (path === '/api/studio/payment-qr' && method === 'POST') {
@@ -271,11 +346,12 @@ export function createApiHandler({ store, env }) {
           const bytes = base64Bytes(input.base64);
           if (!bytes.length) return error('Cash App QR image is required.', 422);
           if (bytes.length > 3_000_000) return error('Cash App QR image must be 3 MB or smaller.', 413);
-          return ok(await store.savePaymentQr({ bytes, mimeType }, session), 201);
+          return saved(await store.savePaymentQr({ bytes, mimeType }, session), 201);
         }
 
         if (path === '/api/studio/orders' && method === 'GET') {
-          return ok({ orders: await store.listOrders({ includePrivate: true }) });
+          const orders = await store.listOrders({ includePrivate: true });
+          return ok({ orders: filterOrders(orders, url) });
         }
 
         const orderStatus = path.match(/^\/api\/studio\/orders\/([^/]+)\/status$/u);
@@ -283,7 +359,7 @@ export function createApiHandler({ store, env }) {
           const input = await bodyJson(request, 20_000);
           if (!ORDER_STATUSES.includes(input.status)) return error('Invalid order status.', 422);
           const order = await store.updateOrderStatus(orderStatus[1], input.status, session);
-          return order ? ok({ order }) : error('Order not found.', 404);
+          return order ? saved({ order }) : error('Order not found.', 404);
         }
 
         const orderPayment = path.match(/^\/api\/studio\/orders\/([^/]+)\/payment$/u);
@@ -291,7 +367,14 @@ export function createApiHandler({ store, env }) {
           const { data, errors } = validatePayment(await bodyJson(request, 20_000));
           if (errors.length) return error('Please correct the payment record.', 422, errors);
           const order = await store.updateOrderPayment(orderPayment[1], data, session);
-          return order ? ok({ order }) : error('Order not found.', 404);
+          return order ? saved({ order }) : error('Order not found.', 404);
+        }
+
+        const orderInternalNote = path.match(/^\/api\/studio\/orders\/([^/]+)\/internal-note$/u);
+        if (orderInternalNote && method === 'POST') {
+          const { data } = validateInternalNote(await bodyJson(request, 20_000));
+          const order = await store.updateOrderInternalNote(orderInternalNote[1], data.internalNote, session);
+          return order ? saved({ order }) : error('Order not found.', 404);
         }
 
         const flyerMatch = path.match(/^\/api\/studio\/drops\/([^/]+)\/flyer\.svg$/u);

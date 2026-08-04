@@ -63,7 +63,7 @@ const drop = {
 };
 
 const localBracelet = {
-  firstName: 'Ava', contactEmail: 'adult@example.com', productType: 'bracelet',
+  firstName: 'Ava', contactEmail: 'adult@example.com', phone: '(901) 555-0112', requestedEmployee: '', productType: 'bracelet',
   orderType: 'custom', braceletStyle: 'beaded', quantity: 2, colors: ['Pink', 'Gold'],
   charm: 'Heart', nameWord: 'BESTIE', size: 'standard', giftPackaging: false,
   neededBy: '', notes: 'Matching pair', fulfillmentMethod: 'pickup', shippingAddress: {}, consent: true
@@ -142,7 +142,7 @@ test('Shipping requires a complete address and public receipts do not expose it'
 test('Button orders remain quote-required until pricing is configured', async () => {
   const { handle, store } = await setup();
   const buttonOrder = {
-    firstName: 'Nia', contactEmail: 'parent@example.com', productType: 'button', quantity: 25,
+    firstName: 'Nia', contactEmail: 'parent@example.com', phone: '901-555-0199', requestedEmployee: 'brooklyn', productType: 'button', quantity: 25,
     buttonOccasion: 'Graduation', buttonText: 'Class of 2026', themeColors: 'Pink and gold',
     artworkReady: true, designInstructions: 'Round buttons with stars.', neededBy: '2026-05-20',
     notes: '', fulfillmentMethod: 'pickup', shippingAddress: {}, consent: true
@@ -215,4 +215,109 @@ test('Legacy bracelet orders remain readable after migration', async () => {
   assert.equal(order.productType, 'bracelet');
   assert.equal(order.braceletStyle, 'braided');
   assert.deepEqual(order.colors, ['Blue']);
+});
+
+
+test('Phone number is required, remains private publicly, and is searchable in Studio', async () => {
+  const { handle } = await setup();
+  let response = await handle(request('/api/orders', { method: 'POST', body: { ...localBracelet, phone: '' } }));
+  assert.equal(response.status, 422);
+
+  response = await handle(request('/api/orders', { method: 'POST', body: localBracelet }));
+  const publicResult = await response.json();
+  assert.equal(response.status, 201);
+  assert.equal('phone' in publicResult.order, false);
+  assert.equal('requestedEmployee' in publicResult.order, false);
+
+  const { auth } = await login(handle);
+  response = await handle(request('/api/studio/orders?view=work&q=555-0112', { auth }));
+  const studioResult = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(studioResult.orders.length, 1);
+  assert.equal(studioResult.orders[0].phone, '(901) 555-0112');
+});
+
+test('Cheyenne, Brooklyn, and no preference are accepted; unknown Maker values are rejected', async () => {
+  const { handle } = await setup();
+  for (const requestedEmployee of ['', 'cheyenne', 'brooklyn']) {
+    const response = await handle(request('/api/orders', { method: 'POST', body: { ...localBracelet, requestedEmployee } }));
+    assert.equal(response.status, 201);
+  }
+  const rejected = await handle(request('/api/orders', { method: 'POST', body: { ...localBracelet, requestedEmployee: 'someone-else' } }));
+  assert.equal(rejected.status, 422);
+
+  const { auth } = await login(handle);
+  const noPreference = await (await handle(request('/api/studio/orders?requestedEmployee=none', { auth }))).json();
+  assert.equal(noPreference.orders.length, 1);
+  assert.equal(noPreference.orders[0].requestedEmployee, '');
+});
+
+test('Order views separate work, ready, paid, and archive without hiding paid unfinished work', async () => {
+  const { handle } = await setup();
+  const first = await (await handle(request('/api/orders', { method: 'POST', body: localBracelet }))).json();
+  const second = await (await handle(request('/api/orders', { method: 'POST', body: { ...localBracelet, firstName: 'Ready' } }))).json();
+  const third = await (await handle(request('/api/orders', { method: 'POST', body: { ...localBracelet, firstName: 'Done' } }))).json();
+  const { auth } = await login(handle);
+
+  await handle(request(`/api/studio/orders/${first.order.id}/payment`, {
+    method: 'POST', body: { paymentStatus: 'received', paymentMethod: 'cash', amountPaidCents: 600, paidAt: '2026-08-03', paymentNote: '' }, auth
+  }));
+  await handle(request(`/api/studio/orders/${second.order.id}/status`, { method: 'POST', body: { status: 'ready' }, auth }));
+  await handle(request(`/api/studio/orders/${third.order.id}/status`, { method: 'POST', body: { status: 'completed' }, auth }));
+
+  const work = await (await handle(request('/api/studio/orders?view=work', { auth }))).json();
+  const ready = await (await handle(request('/api/studio/orders?view=ready', { auth }))).json();
+  const paid = await (await handle(request('/api/studio/orders?view=paid', { auth }))).json();
+  const archive = await (await handle(request('/api/studio/orders?view=archive', { auth }))).json();
+  assert.equal(work.orders.some(order => order.id === first.order.id), true);
+  assert.equal(paid.orders.some(order => order.id === first.order.id), true);
+  assert.equal(ready.orders.some(order => order.id === second.order.id), true);
+  assert.equal(archive.orders.some(order => order.id === third.order.id), true);
+});
+
+test('Photo placement is saved, public only after approval, and can attach to a monthly drop', async () => {
+  const { handle } = await setup();
+  const { auth } = await login(handle);
+  const createdDrop = await (await handle(request('/api/studio/drops', { method: 'POST', body: drop, auth }))).json();
+  const photoBody = {
+    originalName: 'hero.png', mimeType: 'image/png', altText: 'CharmNest products', caption: 'New creations',
+    noFacesConfirmed: true, placement: 'hero', placementDropId: '', originalBase64: 'AQID', webBase64: 'AQID', thumbBase64: 'AQID'
+  };
+  let response = await handle(request('/api/studio/photos', { method: 'POST', body: photoBody, auth }));
+  let data = await response.json();
+  const photoId = data.photo.id;
+
+  response = await handle(request('/api/public/photos'));
+  data = await response.json();
+  assert.equal(data.photos.length, 0);
+
+  await handle(request(`/api/studio/photos/${photoId}/decision`, { method: 'POST', body: { decision: 'approve' }, auth }));
+  response = await handle(request('/api/public/photos'));
+  data = await response.json();
+  assert.equal(data.photos[0].placement, 'hero');
+  assert.equal('originalName' in data.photos[0], false);
+  assert.equal('uploadedBy' in data.photos[0], false);
+
+  response = await handle(request(`/api/studio/photos/${photoId}`, {
+    method: 'PUT', body: { altText: 'Monthly drop bracelets', caption: '', placement: 'monthly-drop', placementDropId: createdDrop.drop.id }, auth
+  }));
+  data = await response.json();
+  assert.equal(data.photo.placement, 'monthly-drop');
+  assert.equal(data.photo.placementDropId, createdDrop.drop.id);
+  const current = await (await handle(request('/api/public/drop'))).json();
+  assert.equal(current.drop.photos.some(photo => photo.id === photoId), true);
+});
+
+test('Private Studio notes save without appearing in public order receipts', async () => {
+  const { handle } = await setup();
+  const created = await (await handle(request('/api/orders', { method: 'POST', body: localBracelet }))).json();
+  assert.equal('internalNote' in created.order, false);
+  const { auth } = await login(handle);
+  const response = await handle(request(`/api/studio/orders/${created.order.id}/internal-note`, {
+    method: 'POST', body: { internalNote: 'Call before local pickup.' }, auth
+  }));
+  const data = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(data.order.internalNote, 'Call before local pickup.');
+  assert.ok(data.savedAt);
 });

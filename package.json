@@ -1,6 +1,6 @@
 {
   "name": "charmnest",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "description": "CharmNest public storefront and unified Maker Studio for bracelets, custom buttons and pins, fulfillment, pricing, payments, photos, and drops.",

@@ -160,9 +160,10 @@ export class LocalStore {
       fs.writeFileSync(filePath, payload);
     }
     const now = nowIso();
-    this.db.prepare('INSERT INTO photos(id,original_key,web_key,thumb_key,original_name,mime_type,size_bytes,alt_text,caption,no_faces_confirmed,status,uploaded_by,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)').run(
+    this.db.prepare('INSERT INTO photos(id,original_key,web_key,thumb_key,original_name,mime_type,size_bytes,alt_text,caption,no_faces_confirmed,status,uploaded_by,created_at,placement,placement_drop_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run(
       id, originalKey, webKey, thumbKey, meta.originalName, meta.mimeType, variants.original.length,
-      meta.altText, meta.caption, Number(meta.noFacesConfirmed), 'pending', actor.username, now
+      meta.altText, meta.caption, Number(meta.noFacesConfirmed), 'pending', actor.username, now,
+      meta.placement || 'unassigned', meta.placementDropId || ''
     );
     this.log(actor, 'photo.upload', 'photo', id, { name: meta.originalName });
     return this.getPhoto(id);
@@ -174,6 +175,32 @@ export class LocalStore {
     const result = this.db.prepare('UPDATE photos SET status=?,approved_by=?,approved_at=? WHERE id=?').run(status, actor.username, now, id);
     if (!result.changes) return null;
     this.log(actor, `photo.${status}`, 'photo', id, {});
+    return this.getPhoto(id);
+  }
+
+  updatePhoto(id, data, actor) {
+    const current = this.getPhoto(id);
+    if (!current) return null;
+    if (data.placement === 'monthly-drop' && !this.getDrop(data.placementDropId)) return null;
+    const now = nowIso();
+    this.db.exec('BEGIN IMMEDIATE;');
+    try {
+      this.db.prepare('UPDATE photos SET alt_text=?,caption=?,placement=?,placement_drop_id=? WHERE id=?').run(
+        data.altText, data.caption, data.placement, data.placementDropId || '', id
+      );
+      this.db.prepare('DELETE FROM drop_photos WHERE photo_id=?').run(id);
+      if (data.placement === 'monthly-drop' && data.placementDropId) {
+        const cover = this.db.prepare('SELECT COUNT(*) AS count FROM drop_photos WHERE drop_id=? AND is_cover=1').get(data.placementDropId);
+        this.db.prepare('INSERT INTO drop_photos(drop_id,photo_id,position,is_cover) VALUES(?,?,COALESCE((SELECT MAX(position)+1 FROM drop_photos WHERE drop_id=?),0),?)').run(
+          data.placementDropId, id, data.placementDropId, Number(!cover?.count)
+        );
+      }
+      this.db.exec('COMMIT;');
+    } catch (error) {
+      this.db.exec('ROLLBACK;');
+      throw error;
+    }
+    this.log(actor, 'photo.update', 'photo', id, { placement: data.placement, placementDropId: data.placementDropId || '', updatedAt: now });
     return this.getPhoto(id);
   }
 
@@ -205,14 +232,15 @@ export class LocalStore {
     const options = data.productOptions || {};
     this.db.prepare(`INSERT INTO orders(
       id,first_name,contact_email,bracelet_style,quantity,colors_json,charm,name_word,size,needed_by,gift_packaging,notes,estimated_cents,status,created_at,updated_at,
-      product_type,order_type,product_options_json,fulfillment_method,shipping_address_json,estimate_complete,estimate_note,payment_status,payment_method,amount_paid_cents,paid_at,payment_note
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+      product_type,order_type,product_options_json,fulfillment_method,shipping_address_json,estimate_complete,estimate_note,payment_status,payment_method,amount_paid_cents,paid_at,payment_note,
+      phone,requested_employee,internal_note
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
       id, data.firstName, data.contactEmail, options.braceletStyle || '', data.quantity,
       JSON.stringify(options.colors || []), options.charm || '', options.nameWord || '', options.size || 'standard',
       data.neededBy, Number(Boolean(options.giftPackaging)), data.notes, data.estimatedCents, 'new', now, now,
       data.productType, data.orderType, JSON.stringify(options), data.fulfillmentMethod,
       JSON.stringify(data.shippingAddress || {}), Number(data.estimateComplete), data.estimateNote,
-      'unpaid', '', 0, null, ''
+      'unpaid', '', 0, null, '', data.phone, data.requestedEmployee || '', ''
     );
     this.log({ username: 'public', role: 'public' }, 'order.create', 'order', id, {
       productType: data.productType,
@@ -251,6 +279,14 @@ export class LocalStore {
       paymentMethod: payment.paymentMethod,
       amountPaidCents: payment.amountPaidCents
     });
+    return this.getOrder(id, { includePrivate: true });
+  }
+
+  updateOrderInternalNote(id, internalNote, actor) {
+    const now = nowIso();
+    const result = this.db.prepare('UPDATE orders SET internal_note=?,updated_at=? WHERE id=?').run(internalNote, now, id);
+    if (!result.changes) return null;
+    this.log(actor, 'order.internal-note', 'order', id, { hasNote: Boolean(internalNote) });
     return this.getOrder(id, { includePrivate: true });
   }
 

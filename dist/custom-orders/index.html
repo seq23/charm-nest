@@ -23,10 +23,11 @@
     <div class="form-grid">
       <div class="field"><label for="firstName">First name</label><input id="firstName" name="firstName" autocomplete="given-name" required></div>
       <div class="field"><label for="contactEmail">Adult-managed contact email</label><input id="contactEmail" name="contactEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 555-5555" required><span class="help">Used only for questions and updates about this order.</span></div>
+      <div class="field"><label for="requestedEmployee">Requested Maker <span class="muted">(optional)</span></label><select id="requestedEmployee" name="requestedEmployee"><option value="">No preference</option><option value="cheyenne">Cheyenne</option><option value="brooklyn">Brooklyn</option></select><span class="help">We will try to honor your request, but availability is not guaranteed.</span></div>
       <div class="field"><label for="productType">Product</label><select id="productType" name="productType" required><option value="bracelet">Bracelet</option><option value="button">Custom button or pin</option></select></div>
       <div class="field"><label for="quantity">Quantity</label><input id="quantity" name="quantity" type="number" min="1" max="500" value="1" required></div>
       <div class="field"><label for="neededBy">Needed by</label><input id="neededBy" name="neededBy" type="date"></div>
-      <div class="field"></div>
     </div>
 
     <fieldset id="bracelet-fields" class="order-fieldset"><legend>Bracelet details</legend><div class="form-grid">

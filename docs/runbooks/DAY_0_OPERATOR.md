@@ -2,11 +2,13 @@
 
 ## Process map
 
-Public visitor -> selects bracelet or button/pin -> chooses pickup, local delivery, or shipping -> submits request -> receives masked public receipt and payment guidance.
+Customer -> chooses bracelet or buttons/pins -> enters email and phone -> optionally requests Cheyenne or Brooklyn -> chooses pickup, delivery, or shipping -> submits request -> receives a privacy-safe confirmation.
 
-Maker -> signs into one Studio lane -> reviews private customer and fulfillment details -> confirms quote -> updates order status -> records cash or Cash App payment -> fulfills order.
+Maker -> signs into one Studio -> uses Work Queue while confirming/making -> records payment when received -> marks finished items Ready -> marks fulfilled items Completed -> finds completed/cancelled orders in Archive.
 
-Maker -> creates/edits drop -> uploads safe photos -> approves them -> publishes or archives the drop.
+Maker -> uploads a safe photo -> chooses its website location -> approves it -> the approved image appears in the selected public location.
+
+Maker -> creates a Drop as a draft -> assigns an approved Monthly Drop photo -> reviews -> publishes -> marks sold out or archives later.
 
 ## Local setup
 
@@ -17,42 +19,68 @@ Maker -> creates/edits drop -> uploads safe photos -> approves them -> publishes
 5. Run `npm run check`.
 6. Run `npm run dev`.
 
+## Order views
+
+- **Work Queue:** New, Confirmed, and Making orders. A paid order stays here until it is ready or completed.
+- **Ready:** Finished items waiting for pickup, delivery, or shipping.
+- **Paid:** Every order whose payment is marked Received, regardless of making status.
+- **Archive:** Completed and Cancelled orders. These are saved, not deleted.
+
+Use filters for name, phone, email, order number, status, payment, product, requested Maker, and fulfillment.
+
+## Save-state meanings
+
+- **No changes:** nothing has been edited.
+- **Unsaved changes:** the form changed but has not reached the server.
+- **Saving…:** the Studio is sending the change.
+- **Saved ✓:** the server confirmed the change.
+- **Could not save:** the change did not complete; keep the screen open and retry after correcting the error.
+
+## Photo placement
+
+- **Homepage hero:** the large main image near the top of the homepage.
+- **Bracelets category:** bracelet product/category images.
+- **Buttons & Pins category:** custom button/pin product images.
+- **Monthly Drop:** belongs to one selected Drop and can become its cover image.
+- **Order example/gallery:** appears in the public Recent Creations gallery.
+- **Not currently displayed:** stays private from public placement.
+
+A photo appears publicly only after it is approved and assigned to a public location.
+
+## Drop workflow
+
+1. Create the Drop.
+2. Add colors, styles, quantity, dates, and public copy.
+3. Save as Draft while preparing.
+4. Upload and approve a photo, then assign it to Monthly Drop.
+5. Publish when ready.
+6. Mark Sold Out when unavailable.
+7. Archive when it should leave the active public list.
+
 ## Production activation order
 
-1. Apply D1 migration `0002_orders_fulfillment_payments.sql`.
-2. Deploy the Worker and assets.
-3. Sign into Maker Studio.
-4. Enter confirmed delivery, shipping, button, gift-packaging, and shipped-bracelet prices.
-5. Enter the Cash App handle and upload the QR image.
-6. Prove one local bracelet request.
-7. Prove one shipped request and verify the address is visible only in Studio.
-8. Prove one custom button request.
-9. Record one cash or Cash App payment.
+1. Apply `0002_orders_fulfillment_payments.sql` if it has not already been applied.
+2. Apply `0003_studio_order_workflow.sql`.
+3. Deploy the Worker and assets.
+4. Sign into Maker Studio.
+5. Prove one bracelet request with phone and no Maker preference.
+6. Prove one button request assigned to Cheyenne or Brooklyn.
+7. Prove one shipped request and verify the address and phone appear only in Studio.
+8. Mark one paid unfinished order and confirm it remains in Work Queue and appears in Paid.
+9. Mark one order Ready, then Completed, and confirm it moves to Archive.
+10. Upload, approve, and place one photo.
 
-## Quote safety
+## Privacy and safety
 
-- `$2` monthly-drop and `$3` local-custom bracelet prices are confirmed.
-- Blank configurable fees remain quote-required.
-- Never tell a customer to pay an incomplete quote.
-- Use `0` only when a fee has been intentionally confirmed as free.
-
-## Photo and artwork safety
-
-- Public product photos may show hands and wrists.
-- No face, partial face, face reflection, school identifier, address, or private document.
+- Phone numbers, full emails, shipping addresses, requested Maker details, payment notes, and internal notes stay private in Studio.
+- Public product photos may show hands and wrists but no face, partial face, reflection, school identifier, address, or private document.
 - Public customers do not upload personal button artwork.
-- Confirm the request first, then use an adult-managed private channel.
-
-## Payment recording
-
-- Mark received only after the Maker verifies the payment.
-- Choose cash or Cash App.
-- Record the exact amount and date.
-- Do not treat the Studio record as automatic provider verification.
+- Confirm button artwork through an adult-managed private channel.
 
 ## Rollback
 
-- Unpublish by changing a drop to draft or archived.
-- Reject or archive an unsafe photo.
-- Restore a D1 backup if a migration/deployment failure corrupts production behavior.
+- Change a public Drop back to Draft or Archived.
+- Set a photo to Not currently displayed, reject it, or archive it.
+- Mark an incorrect payment Unpaid after checking the real record.
+- Restore a D1 backup if a migration or deployment failure corrupts production behavior.
 - Rotate the Maker password and session secret after suspected exposure.

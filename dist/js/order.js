@@ -59,6 +59,8 @@
     return {
       firstName: data.get('firstName'),
       contactEmail: data.get('contactEmail'),
+      phone: data.get('phone'),
+      requestedEmployee: data.get('requestedEmployee'),
       productType: data.get('productType'),
       orderType: data.get('orderType'),
       braceletStyle: data.get('braceletStyle'),

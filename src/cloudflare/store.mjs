@@ -124,9 +124,10 @@ export class CloudflareStore {
       this.media.put(thumbKey, variants.thumb, { httpMetadata: { contentType: 'image/webp' } })
     ]);
     const now = nowIso();
-    await this.db.prepare('INSERT INTO photos(id,original_key,web_key,thumb_key,original_name,mime_type,size_bytes,alt_text,caption,no_faces_confirmed,status,uploaded_by,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(
+    await this.db.prepare('INSERT INTO photos(id,original_key,web_key,thumb_key,original_name,mime_type,size_bytes,alt_text,caption,no_faces_confirmed,status,uploaded_by,created_at,placement,placement_drop_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)').bind(
       id, originalKey, webKey, thumbKey, meta.originalName, meta.mimeType, variants.original.length,
-      meta.altText, meta.caption, Number(meta.noFacesConfirmed), 'pending', actor.username, now
+      meta.altText, meta.caption, Number(meta.noFacesConfirmed), 'pending', actor.username, now,
+      meta.placement || 'unassigned', meta.placementDropId || ''
     ).run();
     await this.log(actor, 'photo.upload', 'photo', id, { name: meta.originalName });
     return this.getPhoto(id);
@@ -138,6 +139,27 @@ export class CloudflareStore {
     const result = await this.db.prepare('UPDATE photos SET status=?,approved_by=?,approved_at=? WHERE id=?').bind(status, actor.username, now, id).run();
     if (!result.meta.changes) return null;
     await this.log(actor, `photo.${status}`, 'photo', id, {});
+    return this.getPhoto(id);
+  }
+
+  async updatePhoto(id, data, actor) {
+    const current = await this.getPhoto(id);
+    if (!current) return null;
+    if (data.placement === 'monthly-drop' && !await this.getDrop(data.placementDropId)) return null;
+    const statements = [
+      this.db.prepare('UPDATE photos SET alt_text=?,caption=?,placement=?,placement_drop_id=? WHERE id=?').bind(
+        data.altText, data.caption, data.placement, data.placementDropId || '', id
+      ),
+      this.db.prepare('DELETE FROM drop_photos WHERE photo_id=?').bind(id)
+    ];
+    if (data.placement === 'monthly-drop' && data.placementDropId) {
+      const cover = await this.db.prepare('SELECT COUNT(*) AS count FROM drop_photos WHERE drop_id=? AND is_cover=1').bind(data.placementDropId).first();
+      statements.push(this.db.prepare('INSERT INTO drop_photos(drop_id,photo_id,position,is_cover) VALUES(?,?,COALESCE((SELECT MAX(position)+1 FROM drop_photos WHERE drop_id=?),0),?)').bind(
+        data.placementDropId, id, data.placementDropId, Number(!cover?.count)
+      ));
+    }
+    await this.db.batch(statements);
+    await this.log(actor, 'photo.update', 'photo', id, { placement: data.placement, placementDropId: data.placementDropId || '' });
     return this.getPhoto(id);
   }
 
@@ -163,14 +185,15 @@ export class CloudflareStore {
     const options = data.productOptions || {};
     await this.db.prepare(`INSERT INTO orders(
       id,first_name,contact_email,bracelet_style,quantity,colors_json,charm,name_word,size,needed_by,gift_packaging,notes,estimated_cents,status,created_at,updated_at,
-      product_type,order_type,product_options_json,fulfillment_method,shipping_address_json,estimate_complete,estimate_note,payment_status,payment_method,amount_paid_cents,paid_at,payment_note
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+      product_type,order_type,product_options_json,fulfillment_method,shipping_address_json,estimate_complete,estimate_note,payment_status,payment_method,amount_paid_cents,paid_at,payment_note,
+      phone,requested_employee,internal_note
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
       id, data.firstName, data.contactEmail, options.braceletStyle || '', data.quantity,
       JSON.stringify(options.colors || []), options.charm || '', options.nameWord || '', options.size || 'standard',
       data.neededBy, Number(Boolean(options.giftPackaging)), data.notes, data.estimatedCents, 'new', now, now,
       data.productType, data.orderType, JSON.stringify(options), data.fulfillmentMethod,
       JSON.stringify(data.shippingAddress || {}), Number(data.estimateComplete), data.estimateNote,
-      'unpaid', '', 0, null, ''
+      'unpaid', '', 0, null, '', data.phone, data.requestedEmployee || '', ''
     ).run();
     await this.log({ username: 'public', role: 'public' }, 'order.create', 'order', id, {
       productType: data.productType,
@@ -211,6 +234,14 @@ export class CloudflareStore {
       paymentMethod: payment.paymentMethod,
       amountPaidCents: payment.amountPaidCents
     });
+    return this.getOrder(id, { includePrivate: true });
+  }
+
+  async updateOrderInternalNote(id, internalNote, actor) {
+    const now = nowIso();
+    const result = await this.db.prepare('UPDATE orders SET internal_note=?,updated_at=? WHERE id=?').bind(internalNote, now, id).run();
+    if (!result.meta.changes) return null;
+    await this.log(actor, 'order.internal-note', 'order', id, { hasNote: Boolean(internalNote) });
     return this.getOrder(id, { includePrivate: true });
   }
 

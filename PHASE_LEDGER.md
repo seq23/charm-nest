@@ -2,62 +2,65 @@
 
 ## Full intended system
 
-A public CharmNest storefront for bracelets and custom buttons/pins plus one authenticated Maker Studio that controls drops, photos, orders, fulfillment, private customer details, pricing, Cash App instructions, manual payment receipts, settings, and marketing assets.
+A public CharmNest storefront for bracelets and custom buttons/pins plus one authenticated Maker Studio that controls drops, photo placement, active and archived orders, fulfillment, private customer details, pricing, Cash App instructions, manual payment receipts, settings, and marketing assets.
+
+## Phase ledger
+
+| Phase | Capability | Status |
+| --- | --- | --- |
+| Phase 1A | Storefront, drops, photos, Studio foundation | Complete |
+| Phase 1B | Unified Maker Studio, buttons/pins, fulfillment, quote-safe pricing, payment records | Complete |
+| Phase 1C | Phone intake, requested Maker, save feedback, order views/filters, photo placement, drop instructions | Implemented in this ZIP |
+| Phase 2 | Production migration and deployment | Not included |
+| Phase 3 | Etsy commerce activation | Not included |
+| Phase 4 | Evidence-based commerce review | Not included |
 
 ## Implemented in this ZIP
 
-### Phase 1B — Unified Studio and expanded custom commerce intake
+### Phase 1C — Studio workflow clarity and order operations
 
-- Retires the active Adult Admin lane and account selector.
-- Uses one fixed Maker Studio account and password hash.
-- Gives the Maker every existing drop, photo, settings, order, and publishing operation.
-- Adds a public Buttons & Pins page and product entry points.
-- Adds bracelet and button/pin order types.
-- Adds local pickup, local delivery, and non-local shipping workflows.
-- Stores shipping addresses privately and excludes them from public receipts.
-- Preserves legacy bracelet orders through migration defaults and serializer fallbacks.
-- Replaces the old online estimator with confirmed local prices and quote-safe configurable fees.
-- Adds Cash App handle, QR-image upload, and public payment instructions.
-- Adds manual cash/Cash App payment recording with status, amount, date, and internal note.
-- Adds migration `0002_orders_fulfillment_payments.sql` and an ordered local migration runner.
-- Adds expanded automated tests and generated public pages/assets.
+- Adds required private phone numbers to custom orders.
+- Adds optional Cheyenne, Brooklyn, or no-preference Maker requests.
+- Keeps phone, requested Maker, shipping address, and internal notes out of public receipts.
+- Adds visible Studio states: No changes, Unsaved changes, Saving…, Saved ✓, and save errors.
+- Adds Work Queue, Ready, Paid, and Archive views.
+- Keeps paid-but-unfinished work visible in Work Queue.
+- Moves Ready orders into a dedicated fulfillment view.
+- Moves Completed and Cancelled orders into Archive without deleting them.
+- Adds filters for customer/order search, status, payment state/method, product, requested Maker, and fulfillment method.
+- Adds private internal order notes.
+- Adds photo placement controls for hero, bracelet category, buttons category, monthly drop, public gallery, or no public location.
+- Adds public rendering for approved Studio-selected hero/category/gallery photos.
+- Adds plain-language photo-placement and Drop workflow instructions.
+- Adds migration `0003_studio_order_workflow.sql`.
+- Updates local SQLite and Cloudflare D1 stores, APIs, tests, validators, docs, and generated output.
 
 ## Not implemented in this ZIP
 
-- Production D1 migration execution.
-- Production Worker deployment or live provider validation.
-- A live Cash App handle or QR image; the client must enter/upload them in Studio.
-- Final button, delivery, shipping, gift-packaging, or shipped-bracelet prices; those remain blank until the client confirms them.
-- Automatic Cash App transaction verification or reconciliation.
-- Public customer photo/artwork upload.
-- Etsy checkout changes, Stripe, Shopify, tax calculation, shipping labels, or automated email delivery.
-- The separate client pricing flyer discussed earlier.
+- SMS or text-message notifications.
+- Separate Cheyenne and Brooklyn accounts, schedules, payroll, commissions, or performance tracking.
+- Automatic Cash App transaction verification.
+- Customer accounts or public artwork uploads.
+- Permanent deletion of completed orders.
+- Production D1 migration or Cloudflare deployment.
+- Etsy checkout changes, Stripe, Shopify, tax calculations, shipping labels, or automated email delivery.
+- The separate client pricing flyer.
 
 ## Remaining phases
 
 ### Phase 2 — Production activation
 
-- Apply migration `0002` to production D1.
-- Deploy the updated Worker and static assets.
-- Enter confirmed delivery, shipping, button, gift-packaging, and shipped-bracelet pricing.
-- Enter the Cash App handle and upload the QR image.
-- Prove one local bracelet order, one shipping order, one button order, and one manual payment receipt.
+- Apply migrations `0002` and `0003` to production D1 in order.
+- Deploy the Worker and generated assets through the connected GitHub/Cloudflare workflow.
+- Prove one local bracelet request, one button request, one shipped request, one paid unfinished order, one ready item, one archived item, and one photo placement.
 
 ### Phase 3 — Etsy commerce activation
 
 - Create or update Etsy listings and connect the appropriate product links.
-- Prove one Etsy order and fulfillment journey.
 
 ### Phase 4 — Evidence-based commerce review
 
-- Use real order volume and operating friction to decide whether additional checkout or shipping automation is justified.
-
-## Repair receipt
-
-- Added deterministic lockfile support for the local updater.
-- Made `npm run validate` rebuild generated output before checking it.
-- Fixed button/pin order persistence for the bracelet-only gift-packaging column.
-- Artifact-environment `npm run check`: 14 pages, 24 required files, and 11/11 tests passed.
+- Use real order volume and operating friction to decide whether more checkout, shipping, or communication automation is justified.
 
 ## Validation status
 

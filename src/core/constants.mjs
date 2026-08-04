@@ -5,7 +5,41 @@ export const PAYMENT_STATUSES = Object.freeze(['unpaid', 'received']);
 export const PAYMENT_METHODS = Object.freeze(['cash', 'cashapp']);
 export const PRODUCT_TYPES = Object.freeze(['bracelet', 'button']);
 export const FULFILLMENT_METHODS = Object.freeze(['pickup', 'local-delivery', 'shipping']);
+export const REQUESTED_EMPLOYEES = Object.freeze(['', 'cheyenne', 'brooklyn']);
 export const ROLES = Object.freeze(['maker']);
+
+export const PHOTO_PLACEMENTS = Object.freeze([
+  {
+    id: 'unassigned',
+    label: 'Not currently displayed',
+    help: 'The photo stays saved in Studio but does not appear on the public website.'
+  },
+  {
+    id: 'hero',
+    label: 'Homepage hero',
+    help: 'The large main image near the top of the homepage.'
+  },
+  {
+    id: 'bracelet-category',
+    label: 'Bracelets category',
+    help: 'The main bracelet image used on public bracelet and shop sections.'
+  },
+  {
+    id: 'buttons-category',
+    label: 'Buttons & Pins category',
+    help: 'The main image used on public buttons-and-pins sections.'
+  },
+  {
+    id: 'monthly-drop',
+    label: 'Monthly Drop',
+    help: 'A photo attached to one specific monthly drop. Choose the drop below.'
+  },
+  {
+    id: 'gallery',
+    label: 'Order example / gallery',
+    help: 'An approved example shown in the public recent-work gallery.'
+  }
+]);
 
 export const DEFAULT_SETTINGS = Object.freeze({
   siteName: 'CharmNest',

@@ -60,6 +60,8 @@ export function serializePhoto(row) {
     caption: row.caption,
     noFacesConfirmed: Boolean(row.no_faces_confirmed),
     status: row.status,
+    placement: row.placement || 'unassigned',
+    placementDropId: row.placement_drop_id || '',
     uploadedBy: row.uploaded_by,
     createdAt: row.created_at,
     approvedBy: row.approved_by,
@@ -113,8 +115,11 @@ export function serializeOrder(row, { includePrivate = false } = {}) {
     updatedAt: row.updated_at
   };
   if (includePrivate) {
+    order.phone = row.phone || '';
+    order.requestedEmployee = row.requested_employee || '';
     order.shippingAddress = shippingAddress;
     order.paymentNote = row.payment_note || '';
+    order.internalNote = row.internal_note || '';
   }
   return order;
 }

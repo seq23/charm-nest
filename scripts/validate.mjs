@@ -12,6 +12,7 @@ const required = [
   'wrangler.toml',
   'migrations/0001_init.sql',
   'migrations/0002_orders_fulfillment_payments.sql',
+  'migrations/0003_studio_order_workflow.sql',
   'src/core/api.mjs',
   'src/core/validation.mjs',
   'src/core/store-utils.mjs',
@@ -122,7 +123,7 @@ if (htmlFiles.length !== 14) errors.push(`Expected 14 generated HTML pages; foun
 const customOrderHtml = path.join(root, 'dist/custom-orders/index.html');
 if (fs.existsSync(customOrderHtml)) {
   const html = fs.readFileSync(customOrderHtml, 'utf8');
-  for (const marker of ['productType', 'isLocalOrder', 'localMethod', 'address1', 'zip']) {
+  for (const marker of ['productType', 'phone', 'requestedEmployee', 'isLocalOrder', 'localMethod', 'address1', 'zip']) {
     if (!html.includes(marker)) errors.push(`Custom-order page is missing required field marker: ${marker}`);
   }
   const orderScript = fs.readFileSync(path.join(root, 'public/js/order.js'), 'utf8');
@@ -137,6 +138,10 @@ if (fs.existsSync(studioHtml)) {
   if (!html.includes('CharmNest Studio')) errors.push('Studio page is missing the unified CharmNest Studio heading.');
   if (!html.includes('name="username" value="maker"')) errors.push('Studio login is missing the single fixed Maker account.');
   if (/Adult Admin|value=["']adult["']/u.test(html)) errors.push('Studio page still exposes a separate Adult lane.');
+  const studioScript = fs.readFileSync(path.join(root, 'public/js/studio.js'), 'utf8');
+  for (const marker of ['Unsaved changes', 'Saving…', 'Saved ✓', 'Work Queue', 'Ready', 'Paid', 'Archive', 'requestedEmployee', 'photoPlacements', 'How Drops Work']) {
+    if (!studioScript.includes(marker)) errors.push(`Studio runtime is missing required workflow marker: ${marker}`);
+  }
 }
 
 if (errors.length) {
