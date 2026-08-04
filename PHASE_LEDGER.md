@@ -10,7 +10,8 @@ A public CharmNest storefront for bracelets and custom buttons/pins plus one aut
 | --- | --- | --- |
 | Phase 1A | Storefront, drops, photos, Studio foundation | Complete |
 | Phase 1B | Unified Maker Studio, buttons/pins, fulfillment, quote-safe pricing, payment records | Complete |
-| Phase 1C | Phone intake, requested Maker, save feedback, order views/filters, photo placement, drop instructions | Implemented in this ZIP |
+| Phase 1C | Phone intake, requested Maker, save feedback, order views/filters, photo placement, drop instructions | Complete |
+| Phase 1D | Founder-flow Studio cleanup: All Orders default, compact list, lighter filters, navigation priority | Implemented by this patch |
 | Phase 2 | Production migration and deployment | Not included |
 | Phase 3 | Etsy commerce activation | Not included |
 | Phase 4 | Evidence-based commerce review | Not included |
@@ -34,6 +35,17 @@ A public CharmNest storefront for bracelets and custom buttons/pins plus one aut
 - Adds plain-language photo-placement and Drop workflow instructions.
 - Adds migration `0003_studio_order_workflow.sql`.
 - Updates local SQLite and Cloudflare D1 stores, APIs, tests, validators, docs, and generated output.
+
+### Phase 1D — Founder-flow Studio cleanup
+
+- Makes All Orders the default Orders & Payments view.
+- Adds counts for All Orders, Work Queue, Ready, Paid, and Archive.
+- Keeps newest orders first.
+- Reorders Studio navigation around the founder's daily journey: orders, drops, photos, pricing/settings, marketing, receipts, help.
+- Replaces fully expanded order cards with compact, scannable summary rows that open for details and controls.
+- Keeps search visible while placing advanced filters in a low-weight disclosure panel.
+- Adds an All Orders dashboard shortcut and updates Help instructions.
+- Requires no database migration and does not change payment or order-state logic.
 
 ## Not implemented in this ZIP
 

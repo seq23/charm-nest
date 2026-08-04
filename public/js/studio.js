@@ -5,7 +5,7 @@
     csrf: '',
     data: null,
     view: 'dashboard',
-    orderTab: 'work',
+    orderTab: 'all',
     orderFilters: {
       q: '', status: '', paymentStatus: '', paymentMethod: '', productType: '', requestedEmployee: '', fulfillmentMethod: ''
     }
@@ -75,11 +75,11 @@
   function renderShell() {
     const items = [
       ['dashboard', 'Dashboard'],
+      ['orders', 'Orders & Payments'],
       ['drops', 'Drops'],
       ['photos', 'Photos'],
-      ['orders', 'Orders & Payments'],
-      ['flyers', 'Flyer Builder'],
       ['brand', 'Brand, Pricing & Pay'],
+      ['flyers', 'Flyer Builder'],
       ['activity', 'Activity Log'],
       ['help', 'Help']
     ];
@@ -139,9 +139,9 @@
     const work = data.orders.filter(order => ['new', 'confirmed', 'making'].includes(order.status)).length;
     const ready = data.orders.filter(order => order.status === 'ready').length;
     const unpaid = data.orders.filter(order => order.paymentStatus !== 'received').length;
-    return `${top('Dashboard', 'One workspace for every CharmNest operation.', '<button class="primary" data-action="new-drop">+ Create New Drop</button>')}
+    return `${top('Dashboard', 'Start with orders that need attention, then move to drops, photos, or settings.', '<button class="primary" data-action="new-drop">+ Create New Drop</button>')}
       <div class="studio-grid cols-4">
-        <article class="studio-card quick-card"><h3>Upload Photos</h3><p>Add safe product, hand, or wrist photos and choose where they appear.</p><button class="primary" data-action="upload-photo">Upload now</button></article>
+        <article class="studio-card quick-card"><h3>All Orders</h3><p>${data.orders.length} total orders across every status.</p><button class="primary" data-action="go-orders" data-order-tab="all">View all orders</button></article>
         <article class="studio-card quick-card"><h3>Work Queue</h3><p>${work} orders still being confirmed or made.</p><button class="secondary" data-action="go-orders" data-order-tab="work">Open work queue</button></article>
         <article class="studio-card quick-card"><h3>Ready Items</h3><p>${ready} orders ready for pickup, delivery, or shipping.</p><button class="secondary" data-action="go-orders" data-order-tab="ready">Open ready items</button></article>
         <article class="studio-card quick-card"><h3>View Website</h3><p>See what customers can see.</p><a class="primary" style="text-decoration:none;text-align:center" href="/" target="_blank">View site</a></article>
@@ -222,17 +222,22 @@
     const statusSave = `order-status-save-${order.id}`;
     const paymentSave = `order-payment-save-${order.id}`;
     const noteSave = `order-note-save-${order.id}`;
-    return `<article class="studio-card order-card"><div class="order-card-head"><div><span class="badge">${escapeHtml(productLabel(order))}</span><h2>${escapeHtml(order.firstName)} · ${order.quantity}</h2><p class="order-contact"><strong>Phone:</strong> ${escapeHtml(order.phone || 'No phone number provided')}<br><strong>Email:</strong> ${escapeHtml(order.contactEmail)}<br><strong>Order:</strong> ${escapeHtml(order.id)}</p><p class="maker-request"><strong>Requested Maker:</strong> ${escapeHtml(requestedMaker(order))}</p></div><span class="${statusClass(order.status)}">${escapeHtml(order.status)}</span></div>
+    const fulfillmentLabel = { pickup: 'Local pickup', 'local-delivery': 'Local delivery', shipping: 'Shipping' }[order.fulfillmentMethod] || titleCase(order.fulfillmentMethod);
+    const paymentReceived = order.paymentStatus === 'received';
+    const placed = order.createdAt ? new Date(order.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    return `<details class="studio-card order-card" data-order-id="${order.id}"><summary class="order-summary"><div class="order-summary-primary"><div class="order-summary-heading"><span class="badge">${escapeHtml(productLabel(order))}</span><div><strong>${escapeHtml(order.firstName)}</strong><span>${escapeHtml(order.id)}</span></div></div><div class="order-summary-meta"><span>Qty ${order.quantity}</span><span>${escapeHtml(fulfillmentLabel)}</span><span>${escapeHtml(requestedMaker(order))}</span>${order.neededBy ? `<span>Due ${escapeHtml(order.neededBy)}</span>` : ''}${placed ? `<span>Placed ${escapeHtml(placed)}</span>` : ''}</div></div><div class="order-summary-status"><span class="${statusClass(order.status)}">${escapeHtml(order.status)}</span><span class="payment-pill ${paymentReceived ? 'payment-received' : 'payment-unpaid'}">${paymentReceived ? 'Paid' : 'Unpaid'}</span><span class="order-expand-label"><span class="when-closed">Open</span><span class="when-open">Close</span></span></div></summary><div class="order-card-body">
+      <div class="order-contact-strip"><p><strong>Phone:</strong> ${escapeHtml(order.phone || 'No phone number provided')}<br><strong>Email:</strong> ${escapeHtml(order.contactEmail)}</p><p class="maker-request"><strong>Requested Maker:</strong> ${escapeHtml(requestedMaker(order))}</p></div>
       <div class="order-detail-grid"><div><h3>Request</h3><p>${productDetails(order) || 'No product details.'}</p>${order.neededBy ? `<p><strong>Needed by:</strong> ${escapeHtml(order.neededBy)}</p>` : ''}${order.notes ? `<p class="tiny"><strong>Customer notes:</strong> ${escapeHtml(order.notes)}</p>` : ''}</div><div><h3>Fulfillment</h3><p>${fulfillmentDetails(order)}</p><p><strong>Estimate:</strong> ${money(order.estimatedCents)} ${order.estimateComplete ? '' : 'known subtotal'}</p><p class="tiny">${escapeHtml(order.estimateNote)}</p></div></div>
       <section class="order-control-section"><h3>Order status</h3><div class="save-row"><select data-order-status="${order.id}" data-save-target="${statusSave}">${['new', 'confirmed', 'making', 'ready', 'completed', 'cancelled'].map(status => `<option value="${status}" ${order.status === status ? 'selected' : ''}>${titleCase(status)}</option>`).join('')}</select>${saveState(statusSave)}</div><p class="tiny">Mark Ready when the item is finished. Mark Completed after pickup, delivery, or shipping is finished. Completed and cancelled orders move to Archive.</p></section>
       <form class="payment-form order-control-section" data-payment-order="${order.id}" data-save-target="${paymentSave}"><h3>Payment</h3><div class="form-grid"><label>Payment status<select name="paymentStatus"><option value="unpaid" ${order.paymentStatus !== 'received' ? 'selected' : ''}>Unpaid</option><option value="received" ${order.paymentStatus === 'received' ? 'selected' : ''}>Received</option></select></label><label>Method<select name="paymentMethod"><option value="">Choose</option><option value="cash" ${order.paymentMethod === 'cash' ? 'selected' : ''}>Cash</option><option value="cashapp" ${order.paymentMethod === 'cashapp' ? 'selected' : ''}>Cash App</option></select></label><label>Amount received<input name="amountPaid" type="number" min="0" step="0.01" value="${(Number(order.amountPaidCents || 0) / 100).toFixed(2)}"></label><label>Date received<input name="paidAt" type="date" value="${paymentDate(order)}"></label><label class="full">Payment note<input name="paymentNote" value="${escapeHtml(order.paymentNote || '')}" placeholder="Optional receipt or note"></label></div><div class="save-row"><button class="primary" type="submit">Save payment</button>${saveState(paymentSave)}</div></form>
       <form class="internal-note-form order-control-section" data-note-order="${order.id}" data-save-target="${noteSave}"><h3>Private Studio note</h3><textarea name="internalNote" rows="3" placeholder="Private making, pickup, delivery, or customer-service note">${escapeHtml(order.internalNote || '')}</textarea><div class="save-row"><button class="secondary" type="submit">Save private note</button>${saveState(noteSave)}</div></form>
-    </article>`;
+    </div></details>`;
   }
 
   function orderCounts() {
     const orders = state.data.orders;
     return {
+      all: orders.length,
       work: orders.filter(order => ['new', 'confirmed', 'making'].includes(order.status)).length,
       ready: orders.filter(order => order.status === 'ready').length,
       paid: orders.filter(order => order.paymentStatus === 'received').length,
@@ -241,6 +246,7 @@
   }
 
   function orderInTab(order) {
+    if (state.orderTab === 'all') return true;
     if (state.orderTab === 'work') return ['new', 'confirmed', 'making'].includes(order.status);
     if (state.orderTab === 'ready') return order.status === 'ready';
     if (state.orderTab === 'paid') return order.paymentStatus === 'received';
@@ -261,7 +267,7 @@
       }
       if (query && ![order.id, order.firstName, order.contactEmail, order.phone].some(value => String(value || '').toLowerCase().includes(query))) return false;
       return true;
-    });
+    }).sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   }
 
   function filterOption(value, label, current) {
@@ -273,12 +279,15 @@
     const orders = filteredOrders();
     const f = state.orderFilters;
     const tabs = [
-      ['work', 'Work Queue'], ['ready', 'Ready'], ['paid', 'Paid'], ['archive', 'Archive']
+      ['all', 'All Orders'], ['work', 'Work Queue'], ['ready', 'Ready'], ['paid', 'Paid'], ['archive', 'Archive']
     ];
-    return `${top('Orders & Payments', 'Keep active work visible, move ready items into their own view, and archive completed or cancelled orders.')}
-      <div class="notice notice-pink"><strong>How the views work:</strong> Paid-but-unfinished orders stay in the Work Queue until they are marked Ready or Completed. The Paid view lets you see every order with a recorded payment.</div>
+    const advancedFilterCount = ['status', 'paymentStatus', 'paymentMethod', 'productType', 'requestedEmployee', 'fulfillmentMethod'].filter(key => Boolean(f[key])).length;
+    const hasAnyFilter = Boolean(f.q.trim()) || advancedFilterCount > 0;
+    const currentTabLabel = tabs.find(([id]) => id === state.orderTab)?.[1] || 'All Orders';
+    return `${top('Orders & Payments', 'See every order first, then narrow the list only when you need to.')}
+      <p class="order-page-guide">Start in <strong>All Orders</strong>. Work Queue shows items still being made, Ready shows finished items waiting for the customer, Paid shows recorded payments, and Archive holds completed or cancelled orders.</p>
       <div class="order-tabs" role="tablist">${tabs.map(([id, label]) => `<button class="order-tab ${state.orderTab === id ? 'active' : ''}" data-order-tab="${id}" role="tab" aria-selected="${state.orderTab === id}">${label} <span>${counts[id]}</span></button>`).join('')}</div>
-      <section class="studio-card filter-panel"><div class="filter-heading"><div><h2>Filter this view</h2><p class="tiny">Search by customer name, phone number, email, or order number.</p></div><button class="secondary" data-action="clear-order-filters">Clear filters</button></div><div class="filter-grid"><label>Search<input id="order-filter-q" value="${escapeHtml(f.q)}" placeholder="Name, phone, email, or order #"></label><label>Status<select id="order-filter-status"><option value="">All statuses</option>${['new','confirmed','making','ready','completed','cancelled'].map(value => filterOption(value, titleCase(value), f.status)).join('')}</select></label><label>Payment<select id="order-filter-payment-status"><option value="">Paid or unpaid</option>${filterOption('unpaid','Unpaid',f.paymentStatus)}${filterOption('received','Received',f.paymentStatus)}</select></label><label>Payment method<select id="order-filter-payment-method"><option value="">Any method</option>${filterOption('cash','Cash',f.paymentMethod)}${filterOption('cashapp','Cash App',f.paymentMethod)}</select></label><label>Product<select id="order-filter-product"><option value="">Any product</option>${filterOption('bracelet','Bracelet',f.productType)}${filterOption('button','Buttons / Pins',f.productType)}</select></label><label>Requested Maker<select id="order-filter-employee"><option value="">Any preference</option>${filterOption('none','No preference',f.requestedEmployee)}${filterOption('cheyenne','Cheyenne',f.requestedEmployee)}${filterOption('brooklyn','Brooklyn',f.requestedEmployee)}</select></label><label>Fulfillment<select id="order-filter-fulfillment"><option value="">Any fulfillment</option>${filterOption('pickup','Local pickup',f.fulfillmentMethod)}${filterOption('local-delivery','Local delivery',f.fulfillmentMethod)}${filterOption('shipping','Shipping',f.fulfillmentMethod)}</select></label></div><div class="studio-actions" style="margin-top:14px"><button class="primary" data-action="apply-order-filters">Apply filters</button></div><p class="view-count">Showing ${orders.length} order${orders.length === 1 ? '' : 's'} in ${tabs.find(([id]) => id === state.orderTab)?.[1]}.</p></section>
+      <section class="order-toolbar"><div class="order-search-row"><label class="order-search-label">Search orders<input id="order-filter-q" value="${escapeHtml(f.q)}" placeholder="Name, phone, email, or order #"></label><button class="secondary" data-action="search-orders">Search</button>${hasAnyFilter ? '<button class="text-button" data-action="clear-order-filters">Clear</button>' : ''}</div><details class="filter-disclosure" ${advancedFilterCount ? 'open' : ''}><summary>More filters ${advancedFilterCount ? `<span>${advancedFilterCount}</span>` : ''}</summary><div class="filter-body"><div class="filter-grid"><label>Status<select id="order-filter-status"><option value="">All statuses</option>${['new','confirmed','making','ready','completed','cancelled'].map(value => filterOption(value, titleCase(value), f.status)).join('')}</select></label><label>Payment<select id="order-filter-payment-status"><option value="">Paid or unpaid</option>${filterOption('unpaid','Unpaid',f.paymentStatus)}${filterOption('received','Received',f.paymentStatus)}</select></label><label>Payment method<select id="order-filter-payment-method"><option value="">Any method</option>${filterOption('cash','Cash',f.paymentMethod)}${filterOption('cashapp','Cash App',f.paymentMethod)}</select></label><label>Product<select id="order-filter-product"><option value="">Any product</option>${filterOption('bracelet','Bracelet',f.productType)}${filterOption('button','Buttons / Pins',f.productType)}</select></label><label>Requested Maker<select id="order-filter-employee"><option value="">Any preference</option>${filterOption('none','No preference',f.requestedEmployee)}${filterOption('cheyenne','Cheyenne',f.requestedEmployee)}${filterOption('brooklyn','Brooklyn',f.requestedEmployee)}</select></label><label>Fulfillment<select id="order-filter-fulfillment"><option value="">Any fulfillment</option>${filterOption('pickup','Local pickup',f.fulfillmentMethod)}${filterOption('local-delivery','Local delivery',f.fulfillmentMethod)}${filterOption('shipping','Shipping',f.fulfillmentMethod)}</select></label></div><div class="filter-actions"><button class="primary" data-action="apply-order-filters">Apply filters</button>${advancedFilterCount ? '<button class="secondary" data-action="clear-order-filters">Clear filters</button>' : ''}</div></div></details><p class="view-count">Showing ${orders.length} of ${counts[state.orderTab]} order${counts[state.orderTab] === 1 ? '' : 's'} in ${currentTabLabel}. Newest orders appear first.</p></section>
       <div class="order-list">${orders.map(orderCard).join('') || '<div class="empty">No orders match this view and filter combination.</div>'}</div>`;
   }
 
@@ -301,7 +310,7 @@
   }
 
   function helpView() {
-    return `${top('Help', 'How to use the unified Maker Studio safely.')}<div class="studio-grid cols-2"><article class="studio-card"><h2>Drop workflow</h2><ol><li>Create the drop and save it as a draft.</li><li>Upload a safe photo and choose Monthly Drop as its location.</li><li>Review public copy, prices, dates, and inventory.</li><li>Publish, mark sold out, or archive.</li></ol></article><article class="studio-card"><h2>Order workflow</h2><ol><li>Use Work Queue for new, confirmed, and making orders.</li><li>Mark the order Ready when the item is finished.</li><li>Record cash or Cash App only after it is received.</li><li>Mark Completed after the customer receives the item.</li></ol></article><article class="studio-card"><h2>Photo workflow</h2><p>Upload, approve, and choose a website location. The Hero is the large homepage image. Category photos appear with Bracelets or Buttons & Pins. Gallery photos appear in Recent Creations. Monthly Drop photos belong to one selected drop.</p></article><article class="studio-card"><h2>Save messages</h2><p><strong>Unsaved changes</strong> means the screen has been edited. <strong>Saving…</strong> means the Studio is working. <strong>Saved ✓</strong> confirms the change reached the server. An error message means it did not save.</p></article></div>`;
+    return `${top('Help', 'Simple steps for running CharmNest from one Studio.')}<div class="studio-grid cols-2"><article class="studio-card"><h2>Order workflow</h2><ol><li>Open All Orders to see the complete list.</li><li>Use Work Queue for orders still being confirmed or made.</li><li>Mark an item Ready when it is finished.</li><li>Record cash or Cash App only after payment is received.</li><li>Mark Completed after pickup, delivery, or shipping is finished.</li></ol></article><article class="studio-card"><h2>Drop workflow</h2><ol><li>Create the drop and save it as a draft.</li><li>Upload a safe photo and choose Monthly Drop as its location.</li><li>Review public copy, prices, dates, and inventory.</li><li>Publish, mark sold out, or archive.</li></ol></article><article class="studio-card"><h2>Photo workflow</h2><p>Upload, approve, and choose a website location. The Hero is the large homepage image. Category photos appear with Bracelets or Buttons & Pins. Gallery photos appear in Recent Creations. Monthly Drop photos belong to one selected drop.</p></article><article class="studio-card"><h2>Save messages</h2><p><strong>Unsaved changes</strong> means the screen has been edited. <strong>Saving…</strong> means the Studio is working. <strong>Saved ✓</strong> confirms the change reached the server. An error message means it did not save.</p></article></div>`;
   }
 
   function bindView() {
@@ -348,7 +357,7 @@
     }));
     document.querySelector('[data-action="go-orders"]')?.addEventListener('click', event => {
       state.view = 'orders';
-      state.orderTab = event.currentTarget.dataset.orderTab || 'work';
+      state.orderTab = event.currentTarget.dataset.orderTab || 'all';
       renderShell();
     });
     document.querySelector('[data-action="clear-order-filters"]')?.addEventListener('click', () => {
@@ -367,6 +376,7 @@
       element.addEventListener('change', () => { state.orderFilters[key] = element.value; });
     }
     document.querySelector('[data-action="apply-order-filters"]')?.addEventListener('click', () => renderView());
+    document.querySelector('[data-action="search-orders"]')?.addEventListener('click', () => renderView());
     document.querySelector('#order-filter-q')?.addEventListener('keydown', event => {
       if (event.key === 'Enter') { event.preventDefault(); renderView(); }
     });

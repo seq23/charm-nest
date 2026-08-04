@@ -9,7 +9,9 @@ CharmNest is a mobile-first public storefront plus one private **Maker Studio** 
 - One Maker Studio login and operating lane.
 - Public custom-order form requires a private phone number.
 - Customers may optionally request Cheyenne, Brooklyn, or no specific Maker.
-- Work Queue, Ready, Paid, and Archive order views with filters for status, payment, product, Maker request, fulfillment, customer, phone, email, and order number.
+- All Orders is the default complete order list, with Work Queue, Ready, Paid, and Archive views for focused work.
+- Orders use compact summary rows that expand only when the Maker needs details, payment controls, status controls, or private notes.
+- Search stays visible while advanced filters remain collapsed until needed, reducing visual clutter.
 - Paid-but-unfinished orders remain in the Work Queue until the item is ready or completed.
 - Studio forms display **No changes**, **Unsaved changes**, **Saving…**, **Saved ✓**, or a clear save error.
 - Photos can be assigned to the homepage hero, Bracelets category, Buttons & Pins category, Monthly Drop, public gallery, or no public location.
