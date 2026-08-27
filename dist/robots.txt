@@ -1,0 +1,123 @@
+# Citation-first crawl policy.
+# Search engines and AI answer engines are explicitly welcome on this site.
+# The per-agent Allow groups below are deliberate: they override any
+# prepended blanket Disallow (e.g. Cloudflare managed robots.txt) for the
+# same agent, because merged same-name groups resolve equal-length
+# Allow/Disallow conflicts in favour of Allow.
+
+User-agent: Googlebot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Bingbot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: GPTBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Claude-User
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Applebot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: CCBot
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: Bytespider
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: CloudflareBrowserRenderingCrawler
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+User-agent: *
+Allow: /
+Disallow: /studio
+Disallow: /api
+
+Sitemap: https://thecharmnest.com/sitemap.xml
