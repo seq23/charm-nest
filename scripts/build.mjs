@@ -56,10 +56,16 @@ ${scripts.map(src => `  <script src="${src}" defer></script>
 </html>`;
 }
 
+// Routes that are emitted but must never be advertised to search engines:
+// the 404 body and the private Maker Studio, both of which are meta-noindexed.
+const NON_INDEXABLE_ROUTES = new Set(['404', 'studio']);
+const indexableRoutes = [];
+
 function write(route, html) {
   const dir = path.join(dist, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), html);
+  if (!NON_INDEXABLE_ROUTES.has(route)) indexableRoutes.push(route);
 }
 
 write('', layout({
@@ -200,4 +206,20 @@ write('studio', `<!doctype html>
 <body><main id="studio-app"><section class="studio-login"><div class="login-card"><img src="/brand/logo-options/logo-03-beaded-badge-web.webp" alt="CharmNest" class="login-logo"><h1>CharmNest Studio</h1><p>One private workspace for drops, photos, custom orders, payments, pricing, and flyers.</p><form id="login-form"><input type="hidden" name="username" value="maker"><label>Studio password<input type="password" name="password" autocomplete="current-password" required></label><button type="submit">Sign in</button><p id="login-status" role="status"></p></form><p class="tiny">The password is verified on the server and is not stored in this page or repository.</p></div></section></main><script src="/js/studio.js" defer></script></body>
 </html>`);
 
-console.log(`Built CharmNest into ${dist}`);
+// sitemap.xml, derived from the routes this build actually emitted so it can
+// never drift. The Worker serves every page directory as `<route>/` (a bare
+// `/shop` 307-redirects to `/shop/`), so each <loc> uses the trailing-slash
+// form that returns 200.
+const SITE_URL = 'https://thecharmnest.com';
+const lastmod = new Date().toISOString().slice(0, 10);
+const sitemapUrls = indexableRoutes
+  .map((route) => `${SITE_URL}/${route ? `${route}/` : ''}`)
+  .sort();
+fs.writeFileSync(
+  path.join(dist, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls
+    .map((url) => `  <url><loc>${url}</loc><lastmod>${lastmod}</lastmod></url>`)
+    .join('\n')}\n</urlset>\n`
+);
+
+console.log(`Built CharmNest into ${dist} (${sitemapUrls.length} sitemap URLs)`);
